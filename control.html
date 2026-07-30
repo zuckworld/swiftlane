@@ -22,11 +22,25 @@
           <select id="control-select"></select>
         </div>
         <div class="control-row">
-          <label for="control-status">Set status</label>
-          <select id="control-status"></select>
+          <label for="control-status">Set delay toggle</label>
+          <select id="control-status">
+            <option value="active">Active</option>
+            <option value="delayed">Delayed</option>
+          </select>
+        </div>
+        <div class="control-row">
+          <label for="control-destination">Set UAE destination</label>
+          <select id="control-destination"></select>
+        </div>
+        <div class="control-row">
+          <label for="control-mode">Simulation mode</label>
+          <select id="control-mode">
+            <option value="realtime">Real-time</option>
+            <option value="preview">Fast preview</option>
+          </select>
         </div>
         <div class="control-actions">
-          <button id="control-update-btn" class="primary-btn">Update status</button>
+          <button id="control-update-btn" class="primary-btn">Apply update</button>
           <button id="control-reset-btn" class="secondary-btn">Reset shipment</button>
         </div>
         <div id="control-details" class="control-note"></div>

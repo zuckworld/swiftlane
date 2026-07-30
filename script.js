@@ -1,22 +1,152 @@
-import { shipments } from './data.js';
+import { shipments as baseShipments } from './data.js';
+import {
+  calculateRouteDistanceKm,
+  createSimulationState,
+  getSimulationSnapshot,
+  rerouteSimulation,
+  tickSimulation,
+} from './simulation.js';
 import { formatNow, getQueryParam, statusLabel, statusClass, renderEventItem, sortShipments } from './app.js';
+
+const STORAGE_KEY = 'swiftlane-simulation-state-v1';
 
 const state = {
   activeShipment: null,
-  eventProgress: 0,
   eventTimer: null,
   sortField: 'status',
   sortDirection: 'asc',
   map: null,
   mapMarkers: [],
   routeLayers: [],
-  selectedRider: null,
+  shipments: [],
 };
 
 const statusOrder = { pending: 1, in_transit: 2, out_for_delivery: 3, delivered: 4, delayed: 5 };
 
+const uaeDestinations = [
+  { value: 'Dubai Creek Harbor', name: 'Dubai Creek Harbor', lat: 25.2769, lng: 55.325 },
+  { value: 'Deira City Centre', name: 'Deira City Centre', lat: 25.2664, lng: 55.3334 },
+  { value: 'Sharjah Freight City', name: 'Sharjah Freight City', lat: 25.2736, lng: 55.3874 },
+  { value: 'Al Ain Mall', name: 'Al Ain Mall', lat: 24.1302, lng: 55.8023 },
+  { value: 'Jumeirah Beach Road', name: 'Jumeirah Beach Road', lat: 25.1849, lng: 55.2365 },
+];
+
 function formatUpdatedLabel(ship) {
   return formatNow(ship.lastUpdate);
+}
+
+function getInitialProgressForStatus(status) {
+  switch (status) {
+    case 'delivered': return 1;
+    case 'out_for_delivery': return 0.8;
+    case 'in_transit': return 0.35;
+    case 'delayed': return 0.45;
+    default: return 0;
+  }
+}
+
+function estimateEtaHours(route = []) {
+  const distanceKm = calculateRouteDistanceKm(route);
+  return Math.max(4, Number((distanceKm / 750).toFixed(1)));
+}
+
+function readPersistedShipments() {
+  try {
+    const raw = window.localStorage.getItem(STORAGE_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (error) {
+    return null;
+  }
+}
+
+function persistShipments() {
+  try {
+    const payload = Object.fromEntries(state.shipments.map((shipment) => [shipment.trackingNumber, shipment.simulation]));
+    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
+  } catch (error) {
+    // Ignore storage errors in demo mode.
+  }
+}
+
+function hydrateRuntimeShipments() {
+  const persisted = readPersistedShipments();
+  state.shipments = baseShipments.map((shipment) => {
+    const savedState = persisted?.[shipment.trackingNumber] ?? null;
+    const route = savedState?.route?.length ? savedState.route : shipment.route;
+    const destination = savedState?.destination ?? route[route.length - 1] ?? shipment.route[shipment.route.length - 1];
+    const simulation = createSimulationState(shipment, {
+      route,
+      destination,
+      etaHours: savedState?.etaHours ?? estimateEtaHours(route),
+      progressFraction: savedState?.progressFraction ?? getInitialProgressForStatus(shipment.status),
+      mode: savedState?.mode ?? 'realtime',
+      isDelayed: Boolean(savedState?.isDelayed),
+      lastUpdatedAt: savedState?.lastUpdatedAt ?? Date.now(),
+      startedAt: savedState?.startedAt ?? Date.now(),
+    });
+    const snapshot = getSimulationSnapshot(shipment, simulation, Date.now());
+    return {
+      ...shipment,
+      simulation,
+      snapshot,
+      status: snapshot.status,
+      lastUpdate: new Date().toISOString(),
+    };
+  });
+  persistShipments();
+  return state.shipments;
+}
+
+function syncShipments(now = Date.now()) {
+  if (!state.shipments.length) {
+    hydrateRuntimeShipments();
+  }
+
+  const persisted = readPersistedShipments();
+  state.shipments = state.shipments.map((shipment) => {
+    const savedState = persisted?.[shipment.trackingNumber] ?? shipment.simulation;
+    const mergedSimulation = {
+      ...shipment.simulation,
+      ...savedState,
+      route: savedState?.route?.length ? savedState.route : shipment.simulation.route,
+    };
+    const nextSimulation = tickSimulation(mergedSimulation, now);
+    const snapshot = getSimulationSnapshot(shipment, nextSimulation, now);
+
+    return {
+      ...shipment,
+      simulation: nextSimulation,
+      snapshot,
+      status: snapshot.status,
+      lastUpdate: new Date(now).toISOString(),
+    };
+  });
+
+  persistShipments();
+  return state.shipments;
+}
+
+function findShipmentByTracking(trackingNumber) {
+  return state.shipments.find((item) => item.trackingNumber === trackingNumber) || null;
+}
+
+function findShipmentByQuery(query) {
+  const normalized = String(query || '').trim().toUpperCase();
+  const lookupShipments = state.shipments.length ? state.shipments : baseShipments;
+  if (!normalized) return null;
+
+  let match = lookupShipments.find((item) => String(item.trackingNumber).toUpperCase() === normalized);
+  if (match) return match;
+  match = lookupShipments.find((item) => String(item.trackingNumber).toUpperCase().endsWith(normalized));
+  if (match) return match;
+  match = lookupShipments.find((item) => String(item.trackingNumber).toUpperCase().includes(normalized));
+  if (match) return match;
+
+  const digits = String(query || '').replace(/\D/g, '');
+  if (digits) {
+    match = lookupShipments.find((item) => String(item.trackingNumber).replace(/\D/g, '').endsWith(digits));
+  }
+  return match || null;
 }
 
 function renderHeroImage() {
@@ -45,24 +175,24 @@ function renderHeroImage() {
 }
 
 function buildStatCards() {
+  const shipments = syncShipments(Date.now());
   const total = shipments.length;
   const inTransit = shipments.filter((item) => item.status === 'in_transit').length;
   const delivered = shipments.filter((item) => item.status === 'delivered').length;
   const delayed = shipments.filter((item) => item.status === 'delayed').length;
-  return {
-    total,
-    inTransit,
-    delivered,
-    delayed,
-  };
+  return { total, inTransit, delivered, delayed };
 }
 
 function renderDashboard() {
   const cardData = buildStatCards();
-  document.getElementById('stats-today').textContent = cardData.total;
-  document.getElementById('stats-in-transit').textContent = cardData.inTransit;
-  document.getElementById('stats-delivered').textContent = cardData.delivered;
-  document.getElementById('stats-delayed').textContent = cardData.delayed;
+  const statsToday = document.getElementById('stats-today');
+  const statsInTransit = document.getElementById('stats-in-transit');
+  const statsDelivered = document.getElementById('stats-delivered');
+  const statsDelayed = document.getElementById('stats-delayed');
+  if (statsToday) statsToday.textContent = cardData.total;
+  if (statsInTransit) statsInTransit.textContent = cardData.inTransit;
+  if (statsDelivered) statsDelivered.textContent = cardData.delivered;
+  if (statsDelayed) statsDelayed.textContent = cardData.delayed;
 
   const heroImage = document.getElementById('hero-visual-container');
   if (heroImage) heroImage.innerHTML = renderHeroImage();
@@ -74,7 +204,7 @@ function renderDashboard() {
 function renderShipmentTable() {
   const body = document.getElementById('table-body');
   if (!body) return;
-  const sorted = sortShipments(shipments, state.sortField, state.sortDirection);
+  const sorted = sortShipments(state.shipments, state.sortField, state.sortDirection);
   const headers = ['Tracking', 'Sender', 'Receiver', 'Status', 'Rider', 'Last update'];
   body.innerHTML = sorted
     .map((shipment) => {
@@ -84,7 +214,7 @@ function renderShipmentTable() {
         shipment.receiver,
         `<span class="${statusClass(shipment.status)}">${statusLabel(shipment.status)}</span>`,
         shipment.riderName,
-        formatNow(shipment.lastUpdate),
+        formatUpdatedLabel(shipment),
       ];
       const tds = cols.map((c, i) => `<td data-label="${headers[i]}">${c}</td>`).join('');
       return `<tr data-href="details.html?id=${shipment.trackingNumber}">${tds}</tr>`;
@@ -114,24 +244,12 @@ function attachTableSorting() {
   });
 }
 
-function initTrackingPage(matchedShipment = null) {
-  let shipment = matchedShipment || null;
-  const trackingId = getQueryParam('id');
-
-  if (!shipment) {
-    shipment = trackingId ? shipments.find((item) => item.trackingNumber === trackingId) : null;
-  }
-
-  if (!shipment) {
-    if (trackingId) return renderMissingShipment();
-    shipment = shipments.find((item) => item.status !== 'delivered') || shipments[0];
-    if (shipment) window.history.replaceState(null, '', `details.html?id=${shipment.trackingNumber}`);
-  }
-
-  if (!shipment) return renderMissingShipment();
-
+function updateActiveShipmentView() {
+  if (!state.activeShipment) return;
+  const shipment = findShipmentByTracking(state.activeShipment.trackingNumber);
+  if (!shipment) return;
   state.activeShipment = shipment;
-  document.title = `Swiftlane - ${shipment.trackingNumber}`;
+  const snapshot = shipment.snapshot;
   const elOrder = document.getElementById('details-order');
   const elStatus = document.getElementById('details-status');
   const elFrom = document.getElementById('details-from');
@@ -139,27 +257,50 @@ function initTrackingPage(matchedShipment = null) {
   const elRider = document.getElementById('details-rider');
   const elUpdated = document.getElementById('details-updated');
   if (elOrder) elOrder.textContent = shipment.trackingNumber;
-  if (elStatus) elStatus.innerHTML = `<span class="${statusClass(shipment.status)}">${statusLabel(shipment.status)}</span>`;
+  if (elStatus) elStatus.innerHTML = `<span class="${statusClass(snapshot.status)}">${statusLabel(snapshot.status)}</span>`;
   if (elFrom) elFrom.textContent = shipment.sender;
   if (elTo) elTo.textContent = shipment.receiver;
   if (elRider) elRider.textContent = shipment.riderName;
-  if (elUpdated) elUpdated.textContent = formatNow(shipment.lastUpdate);
+  if (elUpdated) elUpdated.textContent = formatUpdatedLabel(shipment);
   renderRouteList();
-  renderTimeline(0);
+  renderTimeline(Math.min(shipment.events.length - 1, Math.max(0, Math.floor(snapshot.progressFraction * shipment.events.length))));
+  const bar = document.getElementById('timeline-progress');
+  if (bar) bar.style.width = `${Math.round(snapshot.progressFraction * 100)}%`;
+}
+
+function initTrackingPage(matchedShipment = null) {
+  let shipment = matchedShipment || null;
+  const trackingId = getQueryParam('id');
+
+  if (!shipment) {
+    shipment = trackingId ? findShipmentByTracking(trackingId) : null;
+  }
+
+  if (!shipment) {
+    if (trackingId) return renderMissingShipment();
+    shipment = state.shipments.find((item) => item.status !== 'delivered') || state.shipments[0];
+    if (shipment) window.history.replaceState(null, '', `details.html?id=${shipment.trackingNumber}`);
+  }
+
+  if (!shipment) return renderMissingShipment();
+
+  state.activeShipment = shipment;
+  document.title = `Swiftlane - ${shipment.trackingNumber}`;
+  updateActiveShipmentView();
   startTimelinePlayback();
 }
 
 function renderRouteList() {
   const list = document.getElementById('routes-list');
-  if (!list) return;
-  list.innerHTML = state.activeShipment.route
-    .map((stop) => `<li>${stop.name}</li>`)
+  if (!list || !state.activeShipment) return;
+  list.innerHTML = state.activeShipment.simulation.route
+    .map((stop) => `<li>${stop.name || `${stop.lat.toFixed(2)}, ${stop.lng.toFixed(2)}`}</li>`)
     .join('');
 }
 
 function renderTimeline(activeIndex) {
   const list = document.getElementById('timeline-list');
-  if (!list) return;
+  if (!list || !state.activeShipment) return;
   list.innerHTML = state.activeShipment.events
     .map((event, index) => renderEventItem(event, index <= activeIndex))
     .join('');
@@ -167,25 +308,15 @@ function renderTimeline(activeIndex) {
 
 function startTimelinePlayback() {
   if (!state.activeShipment) return;
-  state.eventProgress = 0;
-  document.getElementById('timeline-progress').style.width = '0%';
-  if (state.eventTimer) clearTimeout(state.eventTimer);
-  const nextEvent = state.activeShipment.events[state.eventProgress];
-  if (!nextEvent) return;
-  state.eventTimer = setTimeout(stepTimeline, nextEvent.delaySec * 200);
-}
-
-function stepTimeline() {
-  if (!state.activeShipment) return;
-  renderTimeline(state.eventProgress);
-  const progress = Math.round(((state.eventProgress + 1) / state.activeShipment.events.length) * 100);
-  const bar = document.getElementById('timeline-progress');
-  if (bar) bar.style.width = `${progress}%`;
-  state.eventProgress += 1;
-  if (state.eventProgress < state.activeShipment.events.length) {
-    const next = state.activeShipment.events[state.eventProgress];
-    state.eventTimer = setTimeout(stepTimeline, next.delaySec * 200);
-  }
+  if (state.eventTimer) window.clearInterval(state.eventTimer);
+  state.eventTimer = window.setInterval(() => {
+    const shipments = syncShipments(Date.now());
+    const active = shipments.find((item) => item.trackingNumber === state.activeShipment?.trackingNumber);
+    if (active) {
+      state.activeShipment = active;
+      updateActiveShipmentView();
+    }
+  }, 1000);
 }
 
 function renderMissingShipment() {
@@ -219,12 +350,17 @@ function initLiveMapPage(matchedShipment = null) {
       attribution: '© OpenStreetMap contributors • CARTO',
     }).addTo(state.map);
   } else {
-    // reuse existing map instance
     state.map.setView([25.0, 55.2], 5);
     clearMapData();
   }
 
   renderLiveRiders(matchedShipment);
+  window.clearInterval(state.mapTimer);
+  state.mapTimer = window.setInterval(() => {
+    const shipments = syncShipments(Date.now());
+    const selected = matchedShipment ? shipments.find((item) => item.trackingNumber === matchedShipment.trackingNumber) : null;
+    renderLiveRiders(selected || null);
+  }, 1000);
 }
 
 function getColorForStatus(status) {
@@ -249,9 +385,11 @@ function createRiderIcon(status, label) {
 
 function renderLiveRiders(matchedShipment = null) {
   if (!state.map) return;
+  clearMapData();
   const sidebar = document.getElementById('rider-list');
-
-  const activeShipments = matchedShipment ? [matchedShipment] : shipments.filter((item) => item.status !== 'pending');
+  const activeShipments = matchedShipment
+    ? [findShipmentByTracking(matchedShipment.trackingNumber)].filter(Boolean)
+    : state.shipments.filter((item) => item.status !== 'pending');
 
   if (sidebar) sidebar.innerHTML = activeShipments
     .map((shipment, index) => `
@@ -265,13 +403,13 @@ function renderLiveRiders(matchedShipment = null) {
     `)
     .join('');
 
-  activeShipments.forEach((shipment, index) => {
-    const lastStop = shipment.route[shipment.route.length - 1];
-    const marker = L.marker([lastStop.lat, lastStop.lng], {
+  activeShipments.forEach((shipment) => {
+    const snapshot = shipment.snapshot;
+    const marker = L.marker([snapshot.position.lat, snapshot.position.lng], {
       icon: createRiderIcon(shipment.status, shipment.riderName.split(' ')[0]),
     }).addTo(state.map);
     state.mapMarkers.push(marker);
-    const routeLine = L.polyline(shipment.route.map((stop) => [stop.lat, stop.lng]), {
+    const routeLine = L.polyline((shipment.simulation.route || shipment.route).map((stop) => [stop.lat, stop.lng]), {
       color: getColorForStatus(shipment.status),
       weight: 4,
       opacity: 0.65,
@@ -293,8 +431,8 @@ function renderLiveRiders(matchedShipment = null) {
       const index = Number(button.dataset.index);
       const shipment = activeShipments[index];
       if (!shipment) return;
-      const [lat, lng] = [shipment.route[shipment.route.length - 1].lat, shipment.route[shipment.route.length - 1].lng];
-      state.map.flyTo([lat, lng], 8, { duration: 1.1 });
+      const position = shipment.snapshot.position;
+      state.map.flyTo([position.lat, position.lng], 8, { duration: 1.1 });
       document.querySelectorAll('.rider-item').forEach((item) => item.classList.remove('selected'));
       button.classList.add('selected');
     });
@@ -304,54 +442,104 @@ function renderLiveRiders(matchedShipment = null) {
 function initControlPage() {
   const select = document.getElementById('control-select');
   const statusSelect = document.getElementById('control-status');
+  const destinationSelect = document.getElementById('control-destination');
+  const modeSelect = document.getElementById('control-mode');
   const notes = document.getElementById('control-notes');
   const details = document.getElementById('control-details');
-  if (!select || !statusSelect || !notes || !details) return;
+  if (!select || !statusSelect || !destinationSelect || !modeSelect || !notes || !details) return;
 
-  select.innerHTML = shipments
-    .map((shipment) => `<option value="${shipment.trackingNumber}">${shipment.trackingNumber} � ${shipment.riderName}</option>`)
+  select.innerHTML = state.shipments
+    .map((shipment) => `<option value="${shipment.trackingNumber}">${shipment.trackingNumber} • ${shipment.riderName}</option>`)
+    .join('');
+
+  destinationSelect.innerHTML = uaeDestinations
+    .map((item) => `<option value="${item.value}">${item.name}</option>`)
     .join('');
 
   statusSelect.innerHTML = [
-    { value: 'pending', label: 'Pending' },
-    { value: 'in_transit', label: 'In transit' },
-    { value: 'out_for_delivery', label: 'Out for delivery' },
-    { value: 'delivered', label: 'Delivered' },
+    { value: 'active', label: 'Active' },
     { value: 'delayed', label: 'Delayed' },
   ]
     .map((item) => `<option value="${item.value}">${item.label}</option>`)
     .join('');
 
+  modeSelect.innerHTML = [
+    { value: 'realtime', label: 'Real-time' },
+    { value: 'preview', label: 'Fast preview' },
+  ]
+    .map((item) => `<option value="${item.value}">${item.label}</option>`)
+    .join('');
+
   const renderControlDetail = () => {
-    const shipment = shipments.find((item) => item.trackingNumber === select.value);
+    const shipment = findShipmentByTracking(select.value);
     if (!shipment) return;
+    const snapshot = shipment.snapshot;
+    const destination = shipment.simulation.destination || shipment.route[shipment.route.length - 1];
     details.innerHTML = `
       <p><strong>Rider:</strong> ${shipment.riderName}</p>
-      <p><strong>Status:</strong> <span class="${statusClass(shipment.status)}">${statusLabel(shipment.status)}</span></p>
-      <p><strong>Route:</strong> ${shipment.sender.split(',')[0]} ? ${shipment.receiver.split(',')[0]}</p>
-      <p><strong>Updated:</strong> ${formatNow(shipment.lastUpdate)}</p>
+      <p><strong>Status:</strong> <span class="${statusClass(snapshot.status)}">${statusLabel(snapshot.status)}</span></p>
+      <p><strong>Live position:</strong> ${snapshot.position.lat.toFixed(2)}, ${snapshot.position.lng.toFixed(2)}</p>
+      <p><strong>ETA:</strong> ${snapshot.remainingEtaHours.toFixed(1)} hours remaining</p>
+      <p><strong>Destination:</strong> ${destination?.name || shipment.receiver}</p>
+      <p><strong>Updated:</strong> ${formatUpdatedLabel(shipment)}</p>
     `;
-    statusSelect.value = shipment.status;
+    statusSelect.value = shipment.simulation.isDelayed ? 'delayed' : 'active';
+    modeSelect.value = shipment.simulation.mode;
   };
 
   select.addEventListener('change', renderControlDetail);
   renderControlDetail();
 
   document.getElementById('control-update-btn').addEventListener('click', () => {
-    const shipment = shipments.find((item) => item.trackingNumber === select.value);
+    const shipment = findShipmentByTracking(select.value);
     if (!shipment) return;
-    shipment.status = statusSelect.value;
-    shipment.lastUpdate = new Date().toISOString();
-    notes.textContent = `Status updated to ${statusLabel(shipment.status)}.`;
+
+    shipment.simulation.isDelayed = statusSelect.value === 'delayed';
+    shipment.simulation.mode = modeSelect.value;
+
+    const destinationOption = uaeDestinations.find((item) => item.value === destinationSelect.value);
+    if (destinationOption) {
+      const currentPosition = shipment.snapshot.position;
+      const rerouted = rerouteSimulation(shipment.simulation, destinationOption, currentPosition, Date.now());
+      shipment.simulation = rerouted;
+      shipment.simulation.mode = modeSelect.value;
+      shipment.simulation.isDelayed = statusSelect.value === 'delayed';
+      shipment.simulation.destination = destinationOption;
+      shipment.simulation.route = [currentPosition, destinationOption];
+      shipment.snapshot = getSimulationSnapshot(shipment, shipment.simulation, Date.now());
+      shipment.status = shipment.snapshot.status;
+      shipment.lastUpdate = new Date().toISOString();
+      notes.textContent = `Rerouted to ${destinationOption.name} with ${shipment.snapshot.remainingEtaHours.toFixed(1)}h remaining.`;
+    } else {
+      shipment.simulation.lastUpdatedAt = Date.now();
+      shipment.snapshot = getSimulationSnapshot(shipment, shipment.simulation, Date.now());
+      shipment.status = shipment.snapshot.status;
+      shipment.lastUpdate = new Date().toISOString();
+      notes.textContent = `Simulation updated to ${statusLabel(shipment.status)}.`;
+    }
+
+    persistShipments();
     renderControlDetail();
   });
 
   document.getElementById('control-reset-btn').addEventListener('click', () => {
-    const shipment = shipments.find((item) => item.trackingNumber === select.value);
+    const shipment = findShipmentByTracking(select.value);
     if (!shipment) return;
-    shipment.status = 'pending';
+    shipment.simulation = createSimulationState(shipment, {
+      route: shipment.route,
+      destination: shipment.route[shipment.route.length - 1],
+      etaHours: shipment.simulation.etaHours,
+      progressFraction: 0,
+      mode: shipment.simulation.mode,
+      isDelayed: false,
+      lastUpdatedAt: Date.now(),
+      startedAt: Date.now(),
+    });
+    shipment.snapshot = getSimulationSnapshot(shipment, shipment.simulation, Date.now());
+    shipment.status = shipment.snapshot.status;
     shipment.lastUpdate = new Date().toISOString();
-    notes.textContent = 'Shipment reset to pending.';
+    persistShipments();
+    notes.textContent = 'Shipment reset to its starting point.';
     renderControlDetail();
   });
 }
@@ -373,7 +561,6 @@ function initMapSearch() {
   }
 
   function resetToSearch() {
-    // clear map layers and reset UI
     clearMapData();
     if (state.map) state.map.setView([25.0, 55.2], 5);
     mapShell.classList.add('hidden');
@@ -383,39 +570,16 @@ function initMapSearch() {
     showError('');
   }
 
-  function findMatch(q) {
-    const qnorm = normalize(q);
-    if (!qnorm) return null;
-    // exact match
-    let m = shipments.find((s) => normalize(s.trackingNumber) === qnorm);
-    if (m) return m;
-    // endsWith last 4-6 digits
-    m = shipments.find((s) => normalize(s.trackingNumber).endsWith(qnorm));
-    if (m) return m;
-    // contains
-    m = shipments.find((s) => normalize(s.trackingNumber).includes(qnorm));
-    if (m) return m;
-    // match by digits only
-    const digits = q.replace(/\D/g, '');
-    if (digits) {
-      m = shipments.find((s) => s.trackingNumber.replace(/\D/g, '').endsWith(digits));
-      if (m) return m;
-    }
-    return null;
-  }
-
   function performSearch() {
     const q = input && input.value;
     if (!q || !String(q).trim()) return showError('Please enter a tracking number.');
-    const matched = findMatch(q);
+    const matched = findShipmentByQuery(q);
     if (!matched) return showError('Tracking number not found.');
 
-    // hide search, show map, and initialize map with matched shipment
     searchScreen.classList.add('hidden');
     mapShell.classList.remove('hidden');
     showError('');
     clearMapData();
-    // update URL
     try { window.history.replaceState(null, '', `map.html?id=${matched.trackingNumber}`); } catch (e) {}
     initLiveMapPage(matched);
   }
@@ -427,7 +591,6 @@ function initMapSearch() {
     trackAnother.addEventListener('click', (e) => { e.preventDefault(); resetToSearch(); });
   }
 
-  // if URL has id, prefill and run search
   const preId = getQueryParam('id');
   if (preId && input) {
     input.value = preId;
@@ -435,7 +598,6 @@ function initMapSearch() {
     return;
   }
 
-  // start on search screen
   searchScreen.classList.remove('hidden');
   mapShell.classList.add('hidden');
   if (input) input.focus();
@@ -451,10 +613,7 @@ function initDetailsSearch() {
   const error = document.getElementById('details-search-error');
   const trackAnother = document.getElementById('details-track-another');
 
-  const normalize = (s) => String(s || '').trim().toUpperCase();
-
   function showError(msg) { if (error) error.textContent = msg; }
-
   function hideDetails() { detailsSections.forEach((el) => { if (el) el.classList.add('hidden'); }); }
   function showDetails() { detailsSections.forEach((el) => { if (el) el.classList.remove('hidden'); }); }
 
@@ -466,30 +625,12 @@ function initDetailsSearch() {
     if (trackAnother) trackAnother.classList.add('hidden');
   }
 
-  function findMatch(q) {
-    const qnorm = normalize(q);
-    if (!qnorm) return null;
-    let m = shipments.find((s) => normalize(s.trackingNumber) === qnorm);
-    if (m) return m;
-    m = shipments.find((s) => normalize(s.trackingNumber).endsWith(qnorm));
-    if (m) return m;
-    m = shipments.find((s) => normalize(s.trackingNumber).includes(qnorm));
-    if (m) return m;
-    const digits = q.replace(/\D/g, '');
-    if (digits) {
-      m = shipments.find((s) => s.trackingNumber.replace(/\D/g, '').endsWith(digits));
-      if (m) return m;
-    }
-    return null;
-  }
-
   function performSearch() {
     const q = input && input.value;
     if (!q || !String(q).trim()) return showError('Please enter a tracking number.');
-    const matched = findMatch(q);
+    const matched = findShipmentByQuery(q);
     if (!matched) return showError('Tracking number not found.');
 
-    // show details and run tracking flow
     searchScreen.classList.add('hidden');
     showDetails();
     showError('');
@@ -502,8 +643,6 @@ function initDetailsSearch() {
   input.addEventListener('keydown', (e) => { if (e.key === 'Enter') performSearch(); });
   if (trackAnother) trackAnother.addEventListener('click', (e) => { e.preventDefault(); resetToSearch(); });
 
-  // start on search screen
-  // if URL has id, prefill and run search
   const preId = getQueryParam('id');
   if (preId && input) {
     input.value = preId;
@@ -517,6 +656,10 @@ function initDetailsSearch() {
 }
 
 function initializePage() {
+  if (!state.shipments.length) {
+    hydrateRuntimeShipments();
+  }
+
   if (document.querySelector('#dashboard-table')) {
     renderDashboard();
   }

@@ -60,12 +60,14 @@ export function createSimulationState(shipment, options = {}) {
   const routeDistanceKm = options.routeDistanceKm ?? calculateRouteDistanceKm(route);
   const etaHours = options.etaHours ?? Math.max(3, routeDistanceKm / 750);
   const averageSpeedKmh = options.averageSpeedKmh ?? (routeDistanceKm / Math.max(etaHours, 0.01));
+  const progressFraction = clamp(Number(options.progressFraction ?? 0), 0, 1);
+  const currentPosition = options.currentPosition ?? interpolateRoutePosition(route, progressFraction);
 
   return {
     trackingNumber: shipment.trackingNumber,
     mode: options.mode ?? 'realtime',
     etaHours: Number(etaHours),
-    progressFraction: clamp(Number(options.progressFraction ?? 0), 0, 1),
+    progressFraction,
     lastUpdatedAt: options.lastUpdatedAt ?? Date.now(),
     startedAt: options.startedAt ?? Date.now(),
     isDelayed: Boolean(options.isDelayed),
@@ -73,6 +75,8 @@ export function createSimulationState(shipment, options = {}) {
     route,
     routeDistanceKm: Number(routeDistanceKm),
     averageSpeedKmh: Number(averageSpeedKmh),
+    originPoint: options.originPoint ?? route[0] ?? null,
+    currentPosition,
   };
 }
 
@@ -91,10 +95,12 @@ export function tickSimulation(state, now = Date.now()) {
     : elapsedMs / 3_600_000;
 
   const nextProgress = clamp((state.progressFraction ?? 0) + elapsedHours / Math.max(state.etaHours, 0.01), 0, 1);
+  const nextPosition = interpolateRoutePosition(state.route ?? [], nextProgress);
 
   return {
     ...state,
     progressFraction: nextProgress,
+    currentPosition: nextPosition,
     lastUpdatedAt: now,
   };
 }
@@ -102,7 +108,7 @@ export function tickSimulation(state, now = Date.now()) {
 export function getSimulationSnapshot(shipment, state, now = Date.now()) {
   const simulation = state ?? createSimulationState(shipment, { progressFraction: 0 });
   const progressFraction = clamp(simulation.progressFraction ?? 0, 0, 1);
-  const position = interpolateRoutePosition(simulation.route ?? shipment.route ?? [], progressFraction);
+  const position = simulation.currentPosition ?? interpolateRoutePosition(simulation.route ?? shipment.route ?? [], progressFraction);
   const remainingEtaHours = Math.max(0, simulation.etaHours * (1 - progressFraction));
   const status = simulation.isDelayed
     ? 'delayed'
@@ -136,11 +142,12 @@ export function rerouteSimulation(state, destination, currentPosition, now = Dat
 
   return {
     ...state,
-    route: [fromPosition, destination],
+    route: [state.originPoint ?? state.route?.[0] ?? fromPosition, fromPosition, destination],
     destination,
     progressFraction: 0,
     etaHours: Number(remainingEtaHours),
     remainingEtaHours: Number(remainingEtaHours),
+    currentPosition: fromPosition,
     lastUpdatedAt: now,
     startedAt: now,
   };

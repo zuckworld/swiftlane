@@ -33,6 +33,8 @@ test('rerouting uses the live position and recomputes a shorter remaining ETA', 
   assert.equal(rerouted.progressFraction, 0);
   assert.ok(rerouted.remainingEtaHours < 4);
   assert.ok(rerouted.remainingEtaHours > 0);
+  assert.deepEqual(rerouted.route[0], baseShipment.route[0]);
+  assert.deepEqual(rerouted.route[1], snapshot.position);
 });
 
 test('status becomes derived from progress and delayed overrides', () => {

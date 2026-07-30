@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swiftlane - Control</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="page-header control-header">
+        <div>
+          <span class="eyebrow">Control center</span>
+          <h1>Shipment management</h1>
+          <p>Use this hidden view to adjust shipment status and test live behavior.</p>
+        </div>
+      </header>
+
+      <section class="control-panel">
+        <div class="control-row">
+          <label for="control-select">Select shipment</label>
+          <select id="control-select"></select>
+        </div>
+        <div class="control-row">
+          <label for="control-status">Set status</label>
+          <select id="control-status"></select>
+        </div>
+        <div class="control-actions">
+          <button id="control-update-btn" class="primary-btn">Update status</button>
+          <button id="control-reset-btn" class="secondary-btn">Reset shipment</button>
+        </div>
+        <div id="control-details" class="control-note"></div>
+        <div id="control-notes" class="control-note"></div>
+      </section>
+    </main>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

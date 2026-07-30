@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swiftlane - Dashboard</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="page-header">
+        <div>
+          <span class="eyebrow">Swiftlane</span>
+          <h1>Courier operations dashboard</h1>
+          <p>Monitor shipments, riders, and delivery status across New York and the UAE.</p>
+        </div>
+        <div class="page-header-actions">
+          <span>Good morning</span>
+          <button class="secondary-btn">New shipment</button>
+        </div>
+      </header>
+
+      <section class="hero-card">
+        <div>
+          <p class="eyebrow">Live delivery overview</p>
+          <h2>Swiftlane makes long-haul courier tracking feel effortless.</h2>
+          <p>See active shipments, rider assignments, and delivery progress in one polished dashboard.</p>
+        </div>
+        <div id="hero-visual-container"></div>
+      </section>
+
+      <section class="stats-row">
+        <article class="stat-card">
+          <span>Total shipments</span>
+          <strong id="stats-today">0</strong>
+        </article>
+        <article class="stat-card">
+          <span>In transit</span>
+          <strong id="stats-in-transit">0</strong>
+        </article>
+        <article class="stat-card">
+          <span>Delivered</span>
+          <strong id="stats-delivered">0</strong>
+        </article>
+        <article class="stat-card">
+          <span>Delayed</span>
+          <strong id="stats-delayed">0</strong>
+        </article>
+      </section>
+
+      <section class="panel">
+        <div class="summary-head">
+          <div>
+            <span class="eyebrow">Shipment feed</span>
+            <h2>Today's active shipments</h2>
+          </div>
+        </div>
+        <div class="dashboard-table-wrap">
+          <table class="dashboard-table" id="dashboard-table">
+            <thead>
+              <tr>
+                <th data-sort="trackingNumber">Tracking</th>
+                <th data-sort="sender">Sender</th>
+                <th data-sort="receiver">Receiver</th>
+                <th data-sort="status">Status</th>
+                <th data-sort="riderName">Rider</th>
+                <th data-sort="lastUpdate">Last update</th>
+              </tr>
+            </thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-bar" aria-label="Primary navigation">
+      <a class="nav-link active" href="index.html">
+        <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-link" href="details.html">
+        <span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span>
+        <span>Track</span>
+      </a>
+      <a class="nav-link" href="map.html">
+        <span class="nav-icon"><i class="fa-solid fa-map"></i></span>
+        <span>Live</span>
+      </a>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

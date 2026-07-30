@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swiftlane - Live map</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="page-header map-header">
+        <div>
+          <span class="eyebrow">Live map</span>
+          <h1>All active riders</h1>
+          <p>Track multiple deliveries at once with a full-screen route overview.</p>
+        </div>
+      </header>
+
+      <section id="search-screen" class="panel search-screen">
+        <div class="search-inner">
+          <div>
+            <span class="eyebrow">Swiftlane</span>
+            <h2>Track a package</h2>
+            <p class="page-title-note">Enter a tracking number to view its live route and timeline.</p>
+          </div>
+          <div class="search-controls">
+            <input id="search-input" type="text" placeholder="Enter tracking number (e.g. SL-2026-0043891)" aria-label="Tracking number" />
+            <button id="search-btn" class="primary-btn">Track</button>
+          </div>
+          <div id="search-error" class="control-note" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="map-shell hidden">
+        <aside class="map-sidebar">
+          <div class="route-panel-header">
+            <div>
+              <span class="eyebrow">Active riders</span>
+              <h2>Rider dispatch</h2>
+            </div>
+          </div>
+          <div id="rider-list"></div>
+          <div class="legend-grid">
+            <div class="legend-item"><div class="legend-swatch" style="background:#38bdf8"></div><span>In transit</span></div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#10b981"></div><span>Out for delivery</span></div>
+            <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div><span>Delayed</span></div>
+          </div>
+        </aside>
+        <div>
+          <a id="track-another" href="#" class="track-another hidden">Track another package</a>
+          <div id="live-map"></div>
+          <div id="map-fallback" class="map-fallback hidden">
+            <h2>Map loading unavailable</h2>
+            <p>Leaflet failed to load. Please check your network or try again later.</p>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="footer-bar" aria-label="Primary navigation">
+      <a class="nav-link" href="index.html">
+        <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-link" href="details.html">
+        <span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span>
+        <span>Track</span>
+      </a>
+      <a class="nav-link active" href="map.html">
+        <span class="nav-icon"><i class="fa-solid fa-map"></i></span>
+        <span>Live</span>
+      </a>
+    </footer>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

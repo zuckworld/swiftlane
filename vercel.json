@@ -1,0 +1,15 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/details/:id", "destination": "/details.html?id=:id" },
+    { "source": "/map/:id", "destination": "/map.html?id=:id" }
+  ],
+  "headers": [
+    {
+      "source": "(.*)",
+      "headers": [
+        { "key": "X-Frame-Options", "value": "DENY" }
+      ]
+    }
+  ]
+}

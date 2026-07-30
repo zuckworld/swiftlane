@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Swiftlane - Tracking</title>
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <main class="app-shell">
+      <header class="page-header detail-header">
+        <div>
+          <span class="eyebrow">Tracking</span>
+          <h1>Shipment timeline</h1>
+          <p>Watch event updates appear as the delivery moves through the route.</p>
+        </div>
+      </header>
+
+      <section id="search-screen" class="panel search-screen">
+        <div class="search-inner">
+          <div>
+            <span class="eyebrow">Swiftlane</span>
+            <h2>Track a package</h2>
+            <p class="page-title-note">Enter a tracking number to view its timeline and route.</p>
+          </div>
+          <div class="search-controls">
+            <input id="details-search-input" type="text" placeholder="Enter tracking number (e.g. SL-2026-0043891)" aria-label="Tracking number" />
+            <button id="details-search-btn" class="primary-btn">Track</button>
+          </div>
+          <div id="details-search-error" class="control-note" aria-live="polite"></div>
+        </div>
+      </section>
+
+      <section class="panel details-summary-card">
+      
+        <div class="summary-head">
+          <div>
+            <span class="eyebrow">Order</span>
+            <strong id="details-order">SWL-0000</strong>
+          </div>
+          <div id="details-status"></div>
+        </div>
+
+        <div class="summary-meta">
+          <div>
+            <span>From</span>
+            <strong id="details-from"></strong>
+          </div>
+          <div>
+            <span>To</span>
+            <strong id="details-to"></strong>
+          </div>
+          <div>
+            <span>Rider</span>
+            <strong id="details-rider"></strong>
+          </div>
+          <div>
+            <span>Last update</span>
+            <strong id="details-updated"></strong>
+          </div>
+        </div>
+      </section>
+
+      <section class="map-shell">
+        <article class="route-panel">
+          <div class="route-panel-header">
+            <div>
+              <span class="eyebrow">Route</span>
+              <h2>Planned stops</h2>
+            </div>
+          </div>
+          <ol id="routes-list"></ol>
+        </article>
+
+        <article class="timeline-panel">
+          <div class="route-panel-header">
+            <div>
+              <span class="eyebrow">Timeline</span>
+              <h2>Live event updates</h2>
+            </div>
+          </div>
+            <a id="details-track-another" href="#" class="track-another hidden">Track another package</a>
+            <div class="progress-track">
+            <div id="timeline-progress" class="progress-fill"></div>
+          </div>
+          <ul id="timeline-list" class="timeline-list"></ul>
+        </article>
+      </section>
+    </main>
+
+    <footer class="footer-bar" aria-label="Primary navigation">
+      <a class="nav-link" href="index.html">
+        <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
+        <span>Dashboard</span>
+      </a>
+      <a class="nav-link active" href="details.html">
+        <span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span>
+        <span>Track</span>
+      </a>
+      <a class="nav-link" href="map.html">
+        <span class="nav-icon"><i class="fa-solid fa-map"></i></span>
+        <span>Live</span>
+      </a>
+    </footer>
+
+    <script type="module" src="script.js"></script>
+  </body>
+</html>

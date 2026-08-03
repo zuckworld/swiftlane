@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us - Swiftlane Online</title>
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+        :root {
+            --bg-dark-primary: #111827;
+            --bg-dark-secondary: #1F2937;
+            --accent-primary: #4F46E5;
+            --accent-secondary: #6366F1;
+            --text-primary: #F3F4F6;
+            --text-secondary: #9CA3AF;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark-primary);
+            color: var(--text-primary);
+        }
+        .card {
+            background-color: var(--bg-dark-secondary);
+            border: 1px solid #374151;
+        }
+        .desktop-nav { transition: width 0.3s ease; }
+        .desktop-nav .nav-text { opacity: 0; transition: opacity 0.2s ease; }
+        .desktop-nav:hover .nav-text { opacity: 1; }
+        .fab-menu-button { transition: transform 0.3s ease-in-out, box-shadow 0.3s ease; }
+        .fab-menu-button.active { transform: rotate(45deg); }
+        .fab-menu-items { transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease; transform-origin: bottom center; }
+        .fab-menu-item { transition: transform 0.3s ease, opacity 0.3s ease; }
+        
+        .page-header-bg {
+            position: relative;
+            background-size: cover;
+            background-position: center;
+        }
+        .page-header-bg::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(17, 24, 39, 1), rgba(17, 24, 39, 0.6));
+            z-index: 1;
+        }
+        .page-header-content {
+            position: relative;
+            z-index: 2;
+        }
+        .form-input {
+            background-color: #374151;
+            border: 1px solid #4B5563;
+            color: var(--text-primary);
+        }
+        .form-input:focus {
+            background-color: var(--bg-dark-secondary);
+            border-color: var(--accent-secondary);
+            ring: 0;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Preloader -->
+    <div id="preloader" class="fixed inset-0 bg-gray-900 z-50 flex justify-center items-center transition-opacity duration-500">
+        <div class="flex flex-col items-center">
+             <svg class="h-16 w-16 text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+            <p class="mt-4 text-lg font-semibold text-gray-300">Swiftlane</p>
+        </div>
+    </div>
+
+    <div class="flex">
+        <!-- Desktop Sidebar Navigation -->
+        <nav class="desktop-nav hidden md:block fixed left-0 top-0 h-full bg-gray-800 shadow-lg w-20 hover:w-56 z-30 group">
+            <ul class="flex flex-col h-full py-4 space-y-2">
+                <li class="px-5 py-3 mb-4">
+                    <a href="index-2.html" class="flex items-center space-x-2">
+                        <svg class="h-10 w-10 text-indigo-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+                        <span class="nav-text text-xl font-extrabold text-white whitespace-nowrap">Swiftlane</span>
+                    </a>
+                </li>
+                 <li>
+                    <a href="index-2.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200">
+                        <i data-feather="home" class="h-6 w-6 flex-shrink-0"></i>
+                        <span class="nav-text ml-4 font-semibold whitespace-nowrap">Home</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="services.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200">
+                        <i data-feather="grid" class="h-6 w-6 flex-shrink-0"></i>
+                        <span class="nav-text ml-4 font-semibold whitespace-nowrap">Services</span>
+                    </a>
+                </li>
+                 <li>
+                    <a href="about.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200">
+                        <i data-feather="info" class="h-6 w-6 flex-shrink-0"></i>
+                        <span class="nav-text ml-4 font-semibold whitespace-nowrap">About</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="#" class="flex items-center py-3 px-6 text-indigo-400 bg-gray-900">
+                        <i data-feather="phone" class="h-6 w-6 flex-shrink-0"></i>
+                        <span class="nav-text ml-4 font-semibold whitespace-nowrap">Contact</span>
+                    </a>
+                </li>
+                 <li class="mt-auto">
+                    <a href="track.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200">
+                        <i data-feather="compass" class="h-6 w-6 flex-shrink-0"></i>
+                        <span class="nav-text ml-4 font-semibold whitespace-nowrap">Track Shipment</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <div id="app-content" class="opacity-0 transition-opacity duration-500 w-full md:pl-20">
+             <!-- Mobile Header -->
+            <header class="md:hidden bg-gray-800/80 backdrop-blur-sm sticky top-0 z-10">
+                <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between items-center py-4">
+                        <div class="flex items-center space-x-2">
+                            <svg class="h-8 w-8 text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+                            <span class="text-xl font-extrabold text-white">Swiftlane</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Main Content -->
+            <main>
+                <!-- Page Header -->
+                <section class="page-header-bg min-h-[40vh] flex items-end py-16" style="background-image: url('https://placehold.co/1920x800/111827/374151?text=Contact+Us');">
+                    <div class="page-header-content container mx-auto px-4 sm:px-6 lg:px-8">
+                        <h1 class="text-4xl md:text-5xl font-extrabold text-white">Get in Touch</h1>
+                        <p class="mt-2 text-lg text-text-secondary max-w-2xl">We're here to help. Reach out to us with any questions or for a personalized quote.</p>
+                    </div>
+                </section>
+
+                <!-- Contact Info and Form Section -->
+                <section class="py-16 md:py-24">
+                    <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                        <div class="grid grid-cols-1 lg:grid-cols-2 gap-12">
+                            <!-- Left: Contact Info -->
+                            <div>
+                                <h2 class="text-3xl font-bold text-white mb-6">Contact Information</h2>
+                                <p class="text-text-secondary mb-8">Our team is available to assist you during business hours. Feel free to visit, call, or email us.</p>
+                                
+                                <div class="space-y-6">
+                                    <div class="flex items-start">
+                                        <div class="p-3 bg-gray-800 rounded-lg mr-4"><i data-feather="map-pin" class="h-6 w-6 text-indigo-400"></i></div>
+                                        <div>
+                                            <h4 class="font-semibold text-white">Our Office</h4>
+                                            <p class="text-text-secondary">512 Logic Drive, Suite 400 Sydney NSW 2000, Australia</p>
+                                        </div>
+                                    </div>
+                                     <div class="flex items-start">
+                                        <div class="p-3 bg-gray-800 rounded-lg mr-4"><i data-feather="phone" class="h-6 w-6 text-indigo-400"></i></div>
+                                        <div>
+                                            <h4 class="font-semibold text-white">Phone</h4>
+                                            <p class="text-text-secondary">+1 (814) 417-4576</p>
+                                        </div>
+                                    </div>
+                                    <div class="flex items-start">
+                                        <div class="p-3 bg-gray-800 rounded-lg mr-4"><i data-feather="mail" class="h-6 w-6 text-indigo-400"></i></div>
+                                        <div>
+                                            <h4 class="font-semibold text-white">Email</h4>
+                                            <p class="text-text-secondary">support@swiftlane.online</p>
+                                        </div>
+                                    </div>
+                                     <div class="flex items-start">
+                                        <div class="p-3 bg-gray-800 rounded-lg mr-4"><i data-feather="clock" class="h-6 w-6 text-indigo-400"></i></div>
+                                        <div>
+                                            <h4 class="font-semibold text-white">Business Hours</h4>
+                                            <p class="text-text-secondary">Monday - Friday: 9am - 6pm</p>
+                                            <p class="text-text-secondary">Saturday: 10am - 2pm</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Right: Contact Form -->
+                            <div id="quote-form" class="card p-8 rounded-2xl">
+                                <h2 class="text-3xl font-bold text-white mb-6">Send Us a Message</h2>
+                                <form action="#" method="POST" class="space-y-6">
+                                    <div>
+                                        <label for="name" class="block text-sm font-medium text-text-secondary mb-2">Full Name</label>
+                                        <input type="text" name="name" id="name" required class="form-input w-full rounded-md py-3 px-4">
+                                    </div>
+                                    <div>
+                                        <label for="email" class="block text-sm font-medium text-text-secondary mb-2">Email Address</label>
+                                        <input type="email" name="email" id="email" required class="form-input w-full rounded-md py-3 px-4">
+                                    </div>
+                                     <div>
+                                        <label for="subject" class="block text-sm font-medium text-text-secondary mb-2">Subject</label>
+                                        <input type="text" name="subject" id="subject" required class="form-input w-full rounded-md py-3 px-4">
+                                    </div>
+                                    <div>
+                                        <label for="message" class="block text-sm font-medium text-text-secondary mb-2">Message</label>
+                                        <textarea name="message" id="message" rows="4" required class="form-input w-full rounded-md py-3 px-4"></textarea>
+                                    </div>
+                                    <div>
+                                        <button type="submit" class="w-full bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 focus:ring-offset-gray-900 transition-all duration-300 shadow-lg hover:shadow-indigo-500/50">
+                                            Send Message
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+                
+                 <!-- Map Section -->
+                <section class="h-96 bg-gray-800">
+                    <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3963.2952467548233!2d3.344407915359487!3d6.609598095220197!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x103b9228fa2a197f%3A0x8c7c9c646ab39f75!2sIkeja%2C%20Lagos!5e0!3m2!1sen!2sng!4v1677671853245!5m2!1sen!2sng" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="filter grayscale invert brightness-75"></iframe>
+                </section>
+                
+                <!-- Footer -->
+                <footer class="bg-gray-800 border-t border-gray-700">
+                    <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                            <div>
+                                <h4 class="font-bold text-white mb-4">Swiftlane Online</h4>
+                                <p class="text-sm text-text-secondary">Your trusted partner in global logistics. Delivering excellence, one shipment at a time.</p>
+                            </div>
+                             <div>
+                                <h4 class="font-bold text-white mb-4">Quick Links</h4>
+                                <ul class="space-y-2 text-sm">
+                                    <li><a href="about.html" class="text-text-secondary hover:text-white">About Us</a></li>
+                                    <li><a href="services.html" class="text-text-secondary hover:text-white">Services</a></li>
+                                    <li><a href="track.html" class="text-text-secondary hover:text-white">Track Shipment</a></li>
+                                    <li><a href="contact.html" class="text-text-secondary hover:text-white">Contact Us</a></li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 class="font-bold text-white mb-4">Contact Info</h4>
+                                <ul class="space-y-2 text-sm text-text-secondary">
+                                    <li class="flex items-start"><i data-feather="map-pin" class="h-4 w-4 mr-2 mt-1"></i><span>512 Logic Drive, Suite 400 Sydney NSW 2000, Australia</span></li>
+                                    <li class="flex items-center"><i data-feather="phone" class="h-4 w-4 mr-2"></i><span>+1 (814) 417-4576</span></li>
+                                    <li class="flex items-center"><i data-feather="mail" class="h-4 w-4 mr-2"></i><span>support@swiftlane.online</span></li>
+                                </ul>
+                            </div>
+                             <div>
+                                <h4 class="font-bold text-white mb-4">Follow Us</h4>
+                                <div class="flex space-x-4">
+                                     <a href="#" class="text-text-secondary hover:text-white"><i data-feather="twitter"></i></a>
+                                     <a href="#" class="text-text-secondary hover:text-white"><i data-feather="facebook"></i></a>
+                                     <a href="#" class="text-text-secondary hover:text-white"><i data-feather="linkedin"></i></a>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="mt-8 pt-8 border-t border-gray-700 text-center text-sm text-text-secondary">
+                            <p>&copy; 2026 Swiftlane Online. All Rights Reserved.</p>
+                        </div>
+                    </div>
+                </footer>
+
+            </main>
+        </div>
+    </div>
+
+    <!-- Mobile Floating Action Button Menu -->
+    <div class="fixed md:hidden bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-4 pb-4 z-20">
+        <div class="relative flex items-center justify-center">
+            <!-- Menu Items -->
+            <div id="fab-menu-items" class="fab-menu-items absolute bottom-0 flex justify-center items-end gap-4 mb-20 opacity-0 transform scale-90 pointer-events-none">
+                <a href="index-2.html" class="fab-menu-item flex flex-col items-center text-text-secondary hover:text-white transition-all transform hover:-translate-y-1" style="transition-delay: 0.2s">
+                    <div class="bg-white rounded-full p-3 shadow-lg"><i data-feather="home" class="h-6 w-6 text-indigo-600"></i></div>
+                    <span class="text-xs font-semibold mt-1">Home</span>
+                </a>
+                <a href="services.html" class="fab-menu-item flex flex-col items-center text-text-secondary hover:text-white transition-all transform hover:-translate-y-1" style="transition-delay: 0.1s">
+                    <div class="bg-white rounded-full p-3 shadow-lg"><i data-feather="grid" class="h-6 w-6 text-indigo-600"></i></div>
+                    <span class="text-xs font-semibold mt-1">Services</span>
+                </a>
+                <a href="about.html" class="fab-menu-item flex flex-col items-center text-text-secondary hover:text-white transition-all transform hover:-translate-y-1" style="transition-delay: 0.1s">
+                    <div class="bg-white rounded-full p-3 shadow-lg"><i data-feather="info" class="h-6 w-6 text-indigo-600"></i></div>
+                    <span class="text-xs font-semibold mt-1">About</span>
+                </a>
+                 <a href="#" class="fab-menu-item flex flex-col items-center text-text-secondary hover:text-white transition-all transform hover:-translate-y-1" style="transition-delay: 0.2s">
+                    <div class="bg-white rounded-full p-3 shadow-lg"><i data-feather="phone" class="h-6 w-6 text-indigo-600"></i></div>
+                    <span class="text-xs font-semibold mt-1">Contact</span>
+                </a>
+            </div>
+            <!-- Main Button -->
+            <button id="fab-menu-button" class="fab-menu-button relative bg-indigo-600 text-white rounded-full h-16 w-16 flex items-center justify-center shadow-xl hover:shadow-2xl hover:shadow-indigo-500/50 hover:bg-indigo-700">
+                <i data-feather="plus" class="h-8 w-8 transition-transform duration-300"></i>
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        // --- Feather Icons ---
+        feather.replace();
+
+        // --- PRELOADER SCRIPT ---
+        window.addEventListener('load', () => {
+            const preloader = document.getElementById('preloader');
+            const content = document.getElementById('app-content');
+            setTimeout(() => {
+                preloader.style.opacity = '0';
+                content.style.opacity = '1';
+                setTimeout(() => preloader.style.display = 'none', 500);
+            }, 500); 
+        });
+
+        // --- FLOATING MENU SCRIPT ---
+        const fabButton = document.getElementById('fab-menu-button');
+        const fabMenuItemsContainer = document.getElementById('fab-menu-items');
+        if (fabButton) {
+            fabButton.addEventListener('click', () => {
+                const isActive = fabButton.classList.toggle('active');
+                if (isActive) {
+                    fabMenuItemsContainer.classList.remove('opacity-0', 'scale-90', 'pointer-events-none');
+                } else {
+                    fabMenuItemsContainer.classList.add('opacity-0', 'scale-90');
+                     setTimeout(() => {
+                        fabMenuItemsContainer.classList.add('pointer-events-none');
+                    }, 300);
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>

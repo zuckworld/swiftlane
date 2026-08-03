@@ -1,0 +1,17 @@
+HTTrack3.49-2+htsswf+htsjava launched on Sat, 01 Aug 2026 13:47:07 at https://swiftlane.online/ +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar
+(winhttrack -qwC2%Ps2u1%s%uN0%I0p3DaK0H0%kf2A25000%f0#f -F "Mozilla/4.5 (compatible; HTTrack 3.0x; Windows 98)" -%F "<!-- Mirrored from %s%s by HTTrack Website Copier/3.x [XR&CO'2014], %s -->" -%l "en, *" https://swiftlane.online/ -O1 "C:\My Web Sites\Swiftlane" +*.png +*.gif +*.jpg +*.jpeg +*.css +*.js -ad.doubleclick.net/* -mime:application/foobar )
+
+Information, Warnings and Errors reported for this mirror:
+note:	the hts-log.txt file, and hts-cache folder, may contain sensitive information,
+	such as username/password authentication for websites mirrored in this project
+	do not share these files/folders if you want these information to remain private
+
+13:47:27	Warning: 	Retry after error -4 (Incorrect length (133200 Bytes, 255811 expected)) at link https://aircargoweek.com/wp-content/uploads/2021/02/Screenshot-2021-02-23-at-09.38.10.png (from https://swiftlane.online/)
+13:47:27	Warning: 	Retry after error -5 (error:00000001:lib(0):func(0):reason(1)) at link https://cdn.businessday.ng/2020/07/sea-freight.jpg (from https://swiftlane.online/)
+13:47:27	Error: 	"Not Found" (404) at link https://swiftlane.online/track/services.html (from https://swiftlane.online/track/tracking.php)
+13:47:27	Error: 	"Not Found" (404) at link https://swiftlane.online/track/about.html (from https://swiftlane.online/track/tracking.php)
+13:47:27	Error: 	"Not Found" (404) at link https://swiftlane.online/track/contact.html (from https://swiftlane.online/track/tracking.php)
+13:47:27	Error: 	"Not Found" (404) at link https://swiftlane.online/track/track.html (from https://swiftlane.online/track/tracking.php)
+
+HTTrack Website Copier/3.49-2 mirror complete in 21 seconds : 26 links scanned, 19 files written (1741046 bytes overall) [1630087 bytes received at 77623 bytes/sec], 167801 bytes transferred using HTTP compression in 8 files, ratio 21%, 1.6 requests per connection
+(4 errors, 2 warnings, 0 messages)

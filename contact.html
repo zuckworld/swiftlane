@@ -7,6 +7,7 @@
     <script src="https://cdn.tailwindcss.com/"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/feather-icons"></script>
+    <link rel="stylesheet" href="fab-menu.css">
     <style>
       :root {
         --bg-dark-primary: #111827;
@@ -211,6 +212,33 @@
       </div>
     </div>
 
+    <div class="fixed md:hidden bottom-0 left-1/2 -translate-x-1/2 w-full max-w-md px-4 pb-4 z-20">
+      <div class="relative flex items-center justify-center">
+        <div id="fab-menu-items" class="fab-menu-items absolute bottom-0 flex justify-center items-end gap-4 mb-20 opacity-0 transform scale-90 pointer-events-none">
+          <a href="index.html" class="fab-menu-item flex flex-col items-center text-text-secondary hover:text-white transition-all transform hover:-translate-y-1" style="transition-delay: 0.2s">
+            <div class="bg-white rounded-full p-3 shadow-lg"><i data-feather="home" class="h-6 w-6 text-indigo-600"></i></div>
+            <span class="text-xs font-semibold mt-1">Home</span>
+          </a>
+          <a href="services.html" class="fab-menu-item flex flex-col items-center text-text-secondary hover:text-white transition-all transform hover:-translate-y-1" style="transition-delay: 0.1s">
+            <div class="bg-white rounded-full p-3 shadow-lg"><i data-feather="grid" class="h-6 w-6 text-indigo-600"></i></div>
+            <span class="text-xs font-semibold mt-1">Services</span>
+          </a>
+          <a href="about.html" class="fab-menu-item flex flex-col items-center text-text-secondary hover:text-white transition-all transform hover:-translate-y-1" style="transition-delay: 0.1s">
+            <div class="bg-white rounded-full p-3 shadow-lg"><i data-feather="info" class="h-6 w-6 text-indigo-600"></i></div>
+            <span class="text-xs font-semibold mt-1">About</span>
+          </a>
+          <a href="contact.html" class="fab-menu-item flex flex-col items-center text-text-secondary hover:text-white transition-all transform hover:-translate-y-1" style="transition-delay: 0.2s">
+            <div class="bg-white rounded-full p-3 shadow-lg"><i data-feather="phone" class="h-6 w-6 text-indigo-600"></i></div>
+            <span class="text-xs font-semibold mt-1">Contact</span>
+          </a>
+        </div>
+        <button id="fab-menu-button" class="fab-menu-button relative bg-indigo-600 text-white rounded-full h-16 w-16 flex items-center justify-center shadow-xl hover:shadow-2xl hover:shadow-indigo-500/50 hover:bg-indigo-700">
+          <i data-feather="plus" class="h-8 w-8 transition-transform duration-300"></i>
+        </button>
+      </div>
+    </div>
+
+    <script src="fab-menu.js"></script>
     <script>
       feather.replace();
       window.addEventListener('load', () => {

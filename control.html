@@ -4,50 +4,163 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swiftlane - Control</title>
-    <link rel="stylesheet" href="styles.css" />
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+      :root {
+        --bg-dark-primary: #111827;
+        --bg-dark-secondary: #1f2937;
+        --accent-primary: #4f46e5;
+        --accent-secondary: #6366f1;
+        --text-primary: #f3f4f6;
+        --text-secondary: #9ca3af;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-dark-primary);
+        color: var(--text-primary);
+      }
+      .card {
+        background-color: var(--bg-dark-secondary);
+        border: 1px solid #374151;
+      }
+      .primary-btn {
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .secondary-btn {
+        background: transparent;
+        color: #d1d5db;
+        border: 1px solid rgba(148,163,184,0.5);
+        cursor: pointer;
+      }
+      .primary-btn:hover { background: #4338ca; }
+      .secondary-btn:hover { border-color: #4f46e5; color: white; }
+      .desktop-nav { transition: width 0.3s ease; }
+      .desktop-nav .nav-text { opacity: 0; transition: opacity 0.2s ease; }
+      .desktop-nav:hover .nav-text { opacity: 1; }
+      .page-header-bg {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+      }
+      .page-header-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(17, 24, 39, 1), rgba(17, 24, 39, 0.6));
+        z-index: 1;
+      }
+      .page-header-content {
+        position: relative;
+        z-index: 2;
+      }
+      .form-input {
+        background-color: #374151;
+        border: 1px solid #4b5563;
+        color: var(--text-primary);
+      }
+      .form-input:focus {
+        background-color: var(--bg-dark-secondary);
+        border-color: var(--accent-secondary);
+        outline: none;
+      }
+    </style>
   </head>
   <body>
-    <main class="app-shell">
-      <header class="page-header control-header">
-        <div>
-          <span class="eyebrow">Control center</span>
-          <h1>Shipment management</h1>
-          <p>Use this hidden view to adjust shipment status and test live behavior.</p>
-        </div>
-      </header>
+    <div id="preloader" class="fixed inset-0 bg-gray-900 z-50 flex justify-center items-center transition-opacity duration-500">
+      <div class="flex flex-col items-center">
+        <svg class="h-16 w-16 text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+        <p class="mt-4 text-lg font-semibold text-gray-300">Swiftlane</p>
+      </div>
+    </div>
 
-      <section class="control-panel">
-        <div class="control-row">
-          <label for="control-select">Select shipment</label>
-          <select id="control-select"></select>
-        </div>
-        <div class="control-row">
-          <label for="control-status">Set delay toggle</label>
-          <select id="control-status">
-            <option value="active">Active</option>
-            <option value="delayed">Delayed</option>
-          </select>
-        </div>
-        <div class="control-row">
-          <label for="control-destination">Set UAE destination</label>
-          <select id="control-destination"></select>
-        </div>
-        <div class="control-row">
-          <label for="control-mode">Simulation mode</label>
-          <select id="control-mode">
-            <option value="realtime">Real-time</option>
-            <option value="preview">Fast preview</option>
-          </select>
-        </div>
-        <div class="control-actions">
-          <button id="control-update-btn" class="primary-btn">Apply update</button>
-          <button id="control-reset-btn" class="secondary-btn">Reset shipment</button>
-        </div>
-        <div id="control-details" class="control-note"></div>
-        <div id="control-notes" class="control-note"></div>
-      </section>
-    </main>
+    <div class="flex">
+      <nav class="desktop-nav hidden md:block fixed left-0 top-0 h-full bg-gray-800 shadow-lg w-20 hover:w-56 z-30 group">
+        <ul class="flex flex-col h-full py-4 space-y-2">
+          <li class="px-5 py-3 mb-4">
+            <a href="index.html" class="flex items-center space-x-2">
+              <svg class="h-10 w-10 text-indigo-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+              <span class="nav-text text-xl font-extrabold text-white whitespace-nowrap">Swiftlane</span>
+            </a>
+          </li>
+          <li><a href="index.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="home" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Home</span></a></li>
+          <li><a href="services.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="grid" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Services</span></a></li>
+          <li><a href="about.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="info" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">About</span></a></li>
+          <li><a href="contact.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="phone" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Contact</span></a></li>
+          <li><a href="details.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="compass" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Track</span></a></li>
+          <li><a href="map.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="map" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Live</span></a></li>
+        </ul>
+      </nav>
 
+      <div id="app-content" class="opacity-0 transition-opacity duration-500 w-full md:pl-20">
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+          <div class="card rounded-2xl shadow-lg p-6 md:p-8 mb-8">
+            <header class="page-header control-header">
+              <div>
+                <span class="eyebrow">Control center</span>
+                <h1>Shipment management</h1>
+                <p>Use this hidden view to adjust shipment status and test live behavior.</p>
+              </div>
+            </header>
+
+            <section class="control-panel mt-6 space-y-6">
+              <div class="control-row space-y-3">
+                <label for="control-select">Select shipment</label>
+                <select id="control-select" class="form-input rounded-xl px-4 py-3"></select>
+              </div>
+            <div class="control-row space-y-3">
+              <label for="control-status">Set delay toggle</label>
+              <select id="control-status" class="form-input rounded-xl px-4 py-3">
+                <option value="active">Active</option>
+                <option value="delayed">Delayed</option>
+              </select>
+            </div>
+            <div class="control-row">
+              <label for="control-destination">Set UAE destination</label>
+              <select id="control-destination" class="form-input rounded-xl px-4 py-3"></select>
+            </div>
+            <div class="control-row">
+              <label for="control-mode">Simulation mode</label>
+              <select id="control-mode" class="form-input rounded-xl px-4 py-3">
+                <option value="realtime">Real-time</option>
+                <option value="preview">Fast preview</option>
+              </select>
+            </div>
+            <div class="control-actions grid gap-4 sm:grid-cols-2 mt-4">
+              <button id="control-update-btn" class="primary-btn rounded-xl px-6 py-3 font-semibold shadow-lg transition duration-200">Apply update</button>
+              <button id="control-reset-btn" class="secondary-btn rounded-xl px-6 py-3 font-semibold transition duration-200">Reset shipment</button>
+            </div>
+            <div id="control-details" class="control-note"></div>
+            <div id="control-notes" class="control-note"></div>
+          </section>
+        </div>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      function fallbackShowApp() {
+        const preloader = document.getElementById('preloader');
+        const appContent = document.getElementById('app-content');
+        if (preloader) {
+          preloader.style.opacity = '0';
+          setTimeout(() => { preloader.style.display = 'none'; }, 500);
+        }
+        if (appContent) {
+          appContent.style.opacity = '1';
+        }
+        if (window.feather) {
+          window.feather.replace();
+        }
+      }
+      document.addEventListener('DOMContentLoaded', fallbackShowApp);
+      window.addEventListener('load', fallbackShowApp);
+    </script>
+    <script src="api-config.js"></script>
     <script type="module" src="script.js"></script>
   </body>
 </html>

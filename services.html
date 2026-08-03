@@ -3,7 +3,7 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Swiftlane Online - Global Logistics & Shipping</title>
+    <title>Our Services</title>
     <script src="https://cdn.tailwindcss.com/"></script>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
     <script src="https://unpkg.com/feather-icons"></script>
@@ -28,19 +28,19 @@
       .desktop-nav { transition: width 0.3s ease; }
       .desktop-nav .nav-text { opacity: 0; transition: opacity 0.2s ease; }
       .desktop-nav:hover .nav-text { opacity: 1; }
-      .hero-bg {
+      .page-header-bg {
         position: relative;
         background-size: cover;
         background-position: center;
       }
-      .hero-bg::before {
+      .page-header-bg::before {
         content: '';
         position: absolute;
         inset: 0;
-        background-color: rgba(17, 24, 39, 0.7);
+        background: linear-gradient(to top, rgba(17, 24, 39, 1), rgba(17, 24, 39, 0.6));
         z-index: 1;
       }
-      .hero-content {
+      .page-header-content {
         position: relative;
         z-index: 2;
       }
@@ -63,8 +63,8 @@
               <span class="nav-text text-xl font-extrabold text-white whitespace-nowrap">Swiftlane</span>
             </a>
           </li>
-          <li><a href="index.html" class="flex items-center py-3 px-6 text-indigo-400 bg-gray-900"><i data-feather="home" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Home</span></a></li>
-          <li><a href="services.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="grid" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Services</span></a></li>
+          <li><a href="index.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="home" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Home</span></a></li>
+          <li><a href="services.html" class="flex items-center py-3 px-6 text-indigo-400 bg-gray-900"><i data-feather="grid" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Services</span></a></li>
           <li><a href="about.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="info" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">About</span></a></li>
           <li><a href="contact.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="phone" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Contact</span></a></li>
           <li><a href="details.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="compass" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Track</span></a></li>
@@ -85,74 +85,62 @@
         </header>
 
         <main>
-          <section class="hero-bg min-h-[70vh] md:min-h-screen flex items-center" style="background-image: url('https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=1800&q=80');">
-            <div class="hero-content container mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <div class="max-w-3xl mx-auto">
-                <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-tight mb-4">Global Logistics, <span class="text-indigo-400">Simplified.</span></h1>
-                <p class="text-lg md:text-xl text-text-primary mb-8">Navigate the complexities of global trade with speed, reliability, and a clear view from departure to delivery.</p>
-                <div class="flex flex-col sm:flex-row justify-center gap-4">
-                  <a href="details.html" class="bg-indigo-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-indigo-700 transition-all duration-300 shadow-lg hover:shadow-indigo-500/50 flex items-center justify-center gap-2">
-                    <i data-feather="compass" class="h-5 w-5"></i>
-                    <span>Track Your Shipment</span>
-                  </a>
-                  <a href="contact.html#quote-form" class="bg-gray-700/50 backdrop-blur-sm border border-gray-600 text-white font-semibold px-8 py-4 rounded-xl hover:bg-gray-700 transition-colors duration-300 flex items-center justify-center gap-2">
-                    <i data-feather="file-text" class="h-5 w-5"></i>
-                    <span>Request a Quote</span>
-                  </a>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          <section class="bg-gray-800 py-12">
-            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-              <div class="grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
-                <div>
-                  <h3 class="text-3xl md:text-4xl font-bold text-white">1.2M+</h3>
-                  <p class="text-text-secondary">Parcels Delivered</p>
-                </div>
-                <div>
-                  <h3 class="text-3xl md:text-4xl font-bold text-white">150+</h3>
-                  <p class="text-text-secondary">Countries Reached</p>
-                </div>
-                <div>
-                  <h3 class="text-3xl md:text-4xl font-bold text-white">99.7%</h3>
-                  <p class="text-text-secondary">On-Time Delivery</p>
-                </div>
-                <div>
-                  <h3 class="text-3xl md:text-4xl font-bold text-white">25k+</h3>
-                  <p class="text-text-secondary">Satisfied Clients</p>
-                </div>
-              </div>
+          <section class="page-header-bg min-h-[40vh] flex items-end py-16" style="background-image: url('https://placehold.co/1920x800/111827/374151?text=Our+Services');">
+            <div class="page-header-content container mx-auto px-4 sm:px-6 lg:px-8">
+              <h1 class="text-4xl md:text-5xl font-extrabold text-white">Our Services</h1>
+              <p class="mt-2 text-lg text-text-secondary max-w-2xl">End-to-end logistics solutions designed for efficiency, reliability, and worldwide reach.</p>
             </div>
           </section>
 
           <section class="py-16 md:py-24">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-              <div class="text-center max-w-3xl mx-auto mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-white">Our Core Services</h2>
-                <p class="mt-4 text-text-secondary">We provide a full spectrum of logistics services to keep your supply chain moving with confidence.</p>
-              </div>
               <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                <div class="card rounded-2xl overflow-hidden group">
+                <div class="card rounded-2xl overflow-hidden group flex flex-col">
                   <img src="https://images.unsplash.com/photo-1517048676732-d65bc937f952?auto=format&fit=crop&w=900&q=80" alt="Air Freight" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <div class="p-6">
+                  <div class="p-6 flex flex-col flex-grow">
                     <h3 class="text-xl font-bold text-white mb-2">Air Freight</h3>
-                    <p class="text-text-secondary text-sm">Fast, reliable air transport for urgent cargo and time-sensitive deliveries.</p>
+                    <p class="text-text-secondary text-sm mb-4">Rapid, dependable air cargo for urgent and high-value shipments across global routes.</p>
+                    <a href="#" class="mt-auto text-indigo-400 font-semibold inline-flex items-center">Learn More <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i></a>
                   </div>
                 </div>
-                <div class="card rounded-2xl overflow-hidden group">
+                <div class="card rounded-2xl overflow-hidden group flex flex-col">
                   <img src="https://images.unsplash.com/photo-1578575437130-527eed3abbec?auto=format&fit=crop&w=900&q=80" alt="Ocean Freight" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <div class="p-6">
+                  <div class="p-6 flex flex-col flex-grow">
                     <h3 class="text-xl font-bold text-white mb-2">Ocean Freight</h3>
-                    <p class="text-text-secondary text-sm">Cost-effective freight for large shipments and long-distance routes.</p>
+                    <p class="text-text-secondary text-sm mb-4">Cost-effective container shipping for large-scale cargo with full route coordination.</p>
+                    <a href="#" class="mt-auto text-indigo-400 font-semibold inline-flex items-center">Learn More <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i></a>
                   </div>
                 </div>
-                <div class="card rounded-2xl overflow-hidden group">
+                <div class="card rounded-2xl overflow-hidden group flex flex-col">
                   <img src="https://images.unsplash.com/photo-1601584115197-04ecc0da31d7?auto=format&fit=crop&w=900&q=80" alt="Road Freight" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
-                  <div class="p-6">
+                  <div class="p-6 flex flex-col flex-grow">
                     <h3 class="text-xl font-bold text-white mb-2">Road Freight</h3>
-                    <p class="text-text-secondary text-sm">Flexible transport for regional and cross-border delivery needs.</p>
+                    <p class="text-text-secondary text-sm mb-4">Flexible ground transportation connecting cities and regional hubs with secure movement.</p>
+                    <a href="#" class="mt-auto text-indigo-400 font-semibold inline-flex items-center">Learn More <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i></a>
+                  </div>
+                </div>
+                <div class="card rounded-2xl overflow-hidden group flex flex-col">
+                  <img src="https://images.unsplash.com/photo-1586528116311-ad8dd3c8310d?auto=format&fit=crop&w=900&q=80" alt="Warehousing" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="text-xl font-bold text-white mb-2">Warehousing & Distribution</h3>
+                    <p class="text-text-secondary text-sm mb-4">Secure storage and distribution services that keep inventory moving with confidence.</p>
+                    <a href="#" class="mt-auto text-indigo-400 font-semibold inline-flex items-center">Learn More <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i></a>
+                  </div>
+                </div>
+                <div class="card rounded-2xl overflow-hidden group flex flex-col">
+                  <img src="https://images.unsplash.com/photo-1556740749-887f6717d7e4?auto=format&fit=crop&w=900&q=80" alt="Customs Brokerage" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="text-xl font-bold text-white mb-2">Customs Brokerage</h3>
+                    <p class="text-text-secondary text-sm mb-4">Expert support for customs clearance, paperwork, and compliance requirements.</p>
+                    <a href="#" class="mt-auto text-indigo-400 font-semibold inline-flex items-center">Learn More <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i></a>
+                  </div>
+                </div>
+                <div class="card rounded-2xl overflow-hidden group flex flex-col">
+                  <img src="https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=900&q=80" alt="Supply Chain Consulting" class="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300" />
+                  <div class="p-6 flex flex-col flex-grow">
+                    <h3 class="text-xl font-bold text-white mb-2">Supply Chain Consulting</h3>
+                    <p class="text-text-secondary text-sm mb-4">Strategy, optimization, and operations support that improves efficiency and reduces delays.</p>
+                    <a href="#" class="mt-auto text-indigo-400 font-semibold inline-flex items-center">Learn More <i data-feather="arrow-right" class="ml-2 h-4 w-4"></i></a>
                   </div>
                 </div>
               </div>
@@ -161,40 +149,30 @@
 
           <section class="py-16 md:py-24 bg-gray-800">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
-              <div class="text-center max-w-3xl mx-auto mb-12">
-                <h2 class="text-3xl md:text-4xl font-bold text-white">What Our Clients Say</h2>
-                <p class="mt-4 text-text-secondary">We’re proud to be a trusted partner for businesses worldwide.</p>
+              <div class="text-center max-w-3xl mx-auto mb-16">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Our Streamlined Process</h2>
+                <p class="mt-4 text-text-secondary">We keep the journey straightforward with four clear steps from planning to delivery.</p>
               </div>
-              <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <div class="card rounded-2xl p-6 flex flex-col">
-                  <p class="text-text-secondary italic">“Swiftlane has transformed our supply chain. Their reliability and communication are second to none.”</p>
-                  <div class="flex items-center mt-6">
-                    <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=200&q=80" alt="Client" class="h-12 w-12 rounded-full object-cover" />
-                    <div class="ml-4">
-                      <p class="font-bold text-white">Klaus Müller</p>
-                      <p class="text-sm text-text-secondary">CEO, Berlin Innovations</p>
-                    </div>
-                  </div>
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-12 relative">
+                <div class="text-center">
+                  <div class="w-20 h-20 rounded-full bg-indigo-600 flex items-center justify-center text-white text-2xl font-bold mx-auto">1</div>
+                  <h3 class="mt-4 text-lg font-semibold text-white">Consultation & Quoting</h3>
+                  <p class="mt-2 text-sm text-text-secondary">We understand your priorities and build a tailored quote around your needs.</p>
                 </div>
-                <div class="card rounded-2xl p-6 flex flex-col bg-indigo-900/50 border-indigo-500">
-                  <p class="text-white italic">“The transparency and tracking experience have become a game changer for our operations.”</p>
-                  <div class="flex items-center mt-6">
-                    <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=200&q=80" alt="Client" class="h-12 w-12 rounded-full object-cover" />
-                    <div class="ml-4">
-                      <p class="font-bold text-white">Isabelle Dubois</p>
-                      <p class="text-sm text-indigo-300">Logistics Head, Parisian Fashion Group</p>
-                    </div>
-                  </div>
+                <div class="text-center">
+                  <div class="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center text-white text-2xl font-bold mx-auto">2</div>
+                  <h3 class="mt-4 text-lg font-semibold text-white">Shipment & Planning</h3>
+                  <p class="mt-2 text-sm text-text-secondary">Our experts select the best route and mode for dependable delivery.</p>
                 </div>
-                <div class="card rounded-2xl p-6 flex flex-col">
-                  <p class="text-text-secondary italic">“Excellent shipping service. My package arrived safely and earlier than expected.”</p>
-                  <div class="flex items-center mt-6">
-                    <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=200&q=80" alt="Client" class="h-12 w-12 rounded-full object-cover" />
-                    <div class="ml-4">
-                      <p class="font-bold text-white">Marco Ricci</p>
-                      <p class="text-sm text-text-secondary">Founder, Milan Fine Foods</p>
-                    </div>
-                  </div>
+                <div class="text-center">
+                  <div class="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center text-white text-2xl font-bold mx-auto">3</div>
+                  <h3 class="mt-4 text-lg font-semibold text-white">Execution & Tracking</h3>
+                  <p class="mt-2 text-sm text-text-secondary">We monitor every stage and keep your team informed in real time.</p>
+                </div>
+                <div class="text-center">
+                  <div class="w-20 h-20 rounded-full bg-gray-700 flex items-center justify-center text-white text-2xl font-bold mx-auto">4</div>
+                  <h3 class="mt-4 text-lg font-semibold text-white">Delivery & Confirmation</h3>
+                  <p class="mt-2 text-sm text-text-secondary">Your shipment arrives safely, with confirmation that the job is complete.</p>
                 </div>
               </div>
             </div>
@@ -203,9 +181,9 @@
           <section class="py-20">
             <div class="container mx-auto px-4 sm:px-6 lg:px-8">
               <div class="bg-indigo-600 rounded-2xl p-10 text-center shadow-2xl shadow-indigo-500/30">
-                <h2 class="text-3xl font-bold text-white mb-4">Ready to Optimize Your Logistics?</h2>
-                <p class="text-indigo-200 max-w-2xl mx-auto mb-8">Let’s discuss how Swiftlane can streamline your supply chain, reduce costs, and grow with your business.</p>
-                <a href="contact.html" class="bg-white text-indigo-600 font-semibold px-8 py-4 rounded-xl hover:bg-gray-200 transition-colors duration-300">Get a Free Quote</a>
+                <h2 class="text-3xl font-bold text-white mb-4">Let’s Build Your Logistics Solution</h2>
+                <p class="text-indigo-200 max-w-2xl mx-auto mb-8">No matter the shipment size or complexity, Swiftlane is ready to help you move faster and smarter.</p>
+                <a href="contact.html" class="bg-white text-indigo-600 font-semibold px-8 py-4 rounded-xl hover:bg-gray-200 transition-colors duration-300">Get in Touch</a>
               </div>
             </div>
           </section>
@@ -215,7 +193,7 @@
               <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
                 <div>
                   <h4 class="font-bold text-white mb-4">Swiftlane</h4>
-                  <p class="text-sm text-text-secondary">Your trusted partner in global logistics and dependable delivery.</p>
+                  <p class="text-sm text-text-secondary">Global logistics services with clear visibility and dependable execution.</p>
                 </div>
                 <div>
                   <h4 class="font-bold text-white mb-4">Quick Links</h4>

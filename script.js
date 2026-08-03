@@ -23,6 +23,15 @@ const state = {
 
 const statusOrder = { pending: 1, in_transit: 2, out_for_delivery: 3, delivered: 4, delayed: 5 };
 
+// Set window.SWIFTLANE_API_BASE_URL in your frontend HTML when the backend is hosted separately.
+// Example for Vercel frontend + Render backend:
+// <script>window.SWIFTLANE_API_BASE_URL = 'https://your-render-app.onrender.com'</script>
+const API_BASE_URL = (window.SWIFTLANE_API_BASE_URL || '').replace(/\/+$|^\s+|\s+$/g, '');
+
+function apiUrl(path) {
+  return API_BASE_URL ? `${API_BASE_URL}${path}` : path;
+}
+
 const uaeDestinations = [
   { value: 'Dubai Creek Harbor', name: 'Dubai Creek Harbor', lat: 25.2769, lng: 55.325 },
   { value: 'Deira City Centre', name: 'Deira City Centre', lat: 25.2664, lng: 55.3334 },
@@ -50,39 +59,45 @@ function estimateEtaHours(route = []) {
   return Math.max(4, Number((distanceKm / 750).toFixed(1)));
 }
 
-function readPersistedShipments() {
+function serializeShipmentForSave(shipment) {
+  return {
+    trackingNumber: shipment.trackingNumber,
+    sender: shipment.sender,
+    receiver: shipment.receiver,
+    riderName: shipment.riderName,
+    status: shipment.status,
+    lastUpdate: shipment.lastUpdate,
+    route: shipment.route,
+    events: shipment.events,
+  };
+}
+
+async function saveShipmentsToServer() {
   try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    return raw ? JSON.parse(raw) : null;
+    const payload = state.shipments.map(serializeShipmentForSave);
+    await fetch(apiUrl('/api/shipments'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
   } catch (error) {
-    return null;
+    console.error('Unable to save shipment data to server:', error);
   }
 }
 
-function persistShipments() {
-  try {
-    const payload = Object.fromEntries(state.shipments.map((shipment) => [shipment.trackingNumber, shipment.simulation]));
-    window.localStorage.setItem(STORAGE_KEY, JSON.stringify(payload));
-  } catch (error) {
-    // Ignore storage errors in demo mode.
-  }
-}
-
-function hydrateRuntimeShipments() {
-  const persisted = readPersistedShipments();
-  state.shipments = baseShipments.map((shipment) => {
-    const savedState = persisted?.[shipment.trackingNumber] ?? null;
-    const route = savedState?.route?.length ? savedState.route : shipment.route;
-    const destination = savedState?.destination ?? route[route.length - 1] ?? shipment.route[shipment.route.length - 1];
+function buildRuntimeShipments(sourceShipments) {
+  return sourceShipments.map((shipment) => {
+    const route = shipment.route || [];
+    const destination = shipment.destination || route[route.length - 1] || shipment.route[shipment.route.length - 1];
     const simulation = createSimulationState(shipment, {
       route,
       destination,
-      etaHours: savedState?.etaHours ?? estimateEtaHours(route),
-      progressFraction: savedState?.progressFraction ?? getInitialProgressForStatus(shipment.status),
-      mode: savedState?.mode ?? 'realtime',
-      isDelayed: Boolean(savedState?.isDelayed),
-      lastUpdatedAt: savedState?.lastUpdatedAt ?? Date.now(),
-      startedAt: savedState?.startedAt ?? Date.now(),
+      etaHours: estimateEtaHours(route),
+      progressFraction: getInitialProgressForStatus(shipment.status),
+      mode: shipment.simulation?.mode ?? 'realtime',
+      isDelayed: Boolean(shipment.simulation?.isDelayed),
+      lastUpdatedAt: shipment.simulation?.lastUpdatedAt ?? Date.now(),
+      startedAt: shipment.simulation?.startedAt ?? Date.now(),
     });
     const snapshot = getSimulationSnapshot(shipment, simulation, Date.now());
     return {
@@ -90,11 +105,26 @@ function hydrateRuntimeShipments() {
       simulation,
       snapshot,
       status: snapshot.status,
-      lastUpdate: new Date().toISOString(),
+      lastUpdate: shipment.lastUpdate || new Date().toISOString(),
     };
   });
-  persistShipments();
+}
+
+function hydrateRuntimeShipments(sourceShipments = baseShipments) {
+  state.shipments = buildRuntimeShipments(sourceShipments);
   return state.shipments;
+}
+
+async function loadShipmentsFromServer() {
+  try {
+    const response = await fetch(apiUrl('/api/shipments'));
+    if (!response.ok) throw new Error('Failed to load shipments');
+    const shipments = await response.json();
+    return shipments;
+  } catch (error) {
+    console.warn('Server shipment load failed, using local data:', error);
+    return null;
+  }
 }
 
 function syncShipments(now = Date.now()) {
@@ -102,13 +132,10 @@ function syncShipments(now = Date.now()) {
     hydrateRuntimeShipments();
   }
 
-  const persisted = readPersistedShipments();
   state.shipments = state.shipments.map((shipment) => {
-    const savedState = persisted?.[shipment.trackingNumber] ?? shipment.simulation;
     const mergedSimulation = {
       ...shipment.simulation,
-      ...savedState,
-      route: savedState?.route?.length ? savedState.route : shipment.simulation.route,
+      route: shipment.simulation.route,
     };
     const nextSimulation = tickSimulation(mergedSimulation, now);
     const snapshot = getSimulationSnapshot(shipment, nextSimulation, now);
@@ -122,7 +149,6 @@ function syncShipments(now = Date.now()) {
     };
   });
 
-  persistShipments();
   return state.shipments;
 }
 
@@ -490,7 +516,7 @@ function initControlPage() {
   select.addEventListener('change', renderControlDetail);
   renderControlDetail();
 
-  document.getElementById('control-update-btn').addEventListener('click', () => {
+  document.getElementById('control-update-btn').addEventListener('click', async () => {
     const shipment = findShipmentByTracking(select.value);
     if (!shipment) return;
 
@@ -501,11 +527,21 @@ function initControlPage() {
     if (destinationOption) {
       const currentPosition = shipment.snapshot.position;
       const rerouted = rerouteSimulation(shipment.simulation, destinationOption, currentPosition, Date.now());
+      if (rerouted.route?.[1] && !rerouted.route[1].name) {
+        rerouted.route[1] = { ...rerouted.route[1], name: 'Current location' };
+      }
       shipment.simulation = rerouted;
       shipment.simulation.mode = modeSelect.value;
       shipment.simulation.isDelayed = statusSelect.value === 'delayed';
       shipment.simulation.destination = destinationOption;
-      shipment.simulation.route = [currentPosition, destinationOption];
+      shipment.route = shipment.simulation.route;
+      shipment.receiver = `${destinationOption.name}, UAE`;
+      shipment.events = shipment.events.map((event) => {
+        if (['out_for_delivery', 'delayed', 'delivered'].includes(event.key)) {
+          return { ...event, meta: destinationOption.name };
+        }
+        return event;
+      });
       shipment.snapshot = getSimulationSnapshot(shipment, shipment.simulation, Date.now());
       shipment.status = shipment.snapshot.status;
       shipment.lastUpdate = new Date().toISOString();
@@ -518,11 +554,11 @@ function initControlPage() {
       notes.textContent = `Simulation updated to ${statusLabel(shipment.status)}.`;
     }
 
-    persistShipments();
+    await saveShipmentsToServer();
     renderControlDetail();
   });
 
-  document.getElementById('control-reset-btn').addEventListener('click', () => {
+  document.getElementById('control-reset-btn').addEventListener('click', async () => {
     const shipment = findShipmentByTracking(select.value);
     if (!shipment) return;
     shipment.simulation = createSimulationState(shipment, {
@@ -538,16 +574,32 @@ function initControlPage() {
     shipment.snapshot = getSimulationSnapshot(shipment, shipment.simulation, Date.now());
     shipment.status = shipment.snapshot.status;
     shipment.lastUpdate = new Date().toISOString();
-    persistShipments();
+    await saveShipmentsToServer();
     notes.textContent = 'Shipment reset to its starting point.';
     renderControlDetail();
   });
+}
+
+function renderLiveMapSummary() {
+  const activeCount = state.shipments.filter((item) => item.status !== 'delivered').length;
+  const onRouteCount = state.shipments.filter((item) => ['in_transit', 'out_for_delivery'].includes(item.status)).length;
+  const delayedCount = state.shipments.filter((item) => item.status === 'delayed').length;
+
+  const activeEl = document.getElementById('active-riders-count');
+  const onRouteEl = document.getElementById('onroute-count');
+  const delayedEl = document.getElementById('delayed-count');
+
+  if (activeEl) activeEl.textContent = String(activeCount);
+  if (onRouteEl) onRouteEl.textContent = String(onRouteCount);
+  if (delayedEl) delayedEl.textContent = String(delayedCount);
 }
 
 function initMapSearch() {
   const searchScreen = document.getElementById('search-screen');
   const mapShell = document.querySelector('.map-shell');
   if (!searchScreen || !mapShell) return;
+
+  renderLiveMapSummary();
 
   const input = document.getElementById('search-input');
   const btn = document.getElementById('search-btn');
@@ -605,7 +657,10 @@ function initMapSearch() {
 
 function initDetailsSearch() {
   const searchScreen = document.getElementById('search-screen');
-  const detailsSections = [document.querySelector('.details-summary-card'), document.querySelector('.stages-panel'), document.querySelector('.info-grid')];
+  const detailsSections = [
+    document.querySelector('.details-summary-card'),
+    document.querySelector('.map-shell'),
+  ];
   if (!searchScreen) return;
 
   const input = document.getElementById('details-search-input');
@@ -655,23 +710,50 @@ function initDetailsSearch() {
   if (input) input.focus();
 }
 
-function initializePage() {
-  if (!state.shipments.length) {
-    hydrateRuntimeShipments();
-  }
+function hidePreloader() {
+  const preloader = document.getElementById('preloader');
+  const content = document.getElementById('app-content');
+  if (!preloader || !content) return;
+  preloader.style.opacity = '0';
+  content.style.opacity = '1';
+  setTimeout(() => {
+    preloader.style.display = 'none';
+  }, 500);
+}
 
-  if (document.querySelector('#dashboard-table')) {
-    renderDashboard();
-  }
-  if (document.querySelector('#timeline-list')) {
-    initDetailsSearch();
-  }
-  if (document.querySelector('#live-map')) {
-    initMapSearch();
-  }
-  if (document.querySelector('#control-select')) {
-    initControlPage();
+async function initializePage() {
+  try {
+    const serverShipments = await loadShipmentsFromServer();
+    if (serverShipments) {
+      hydrateRuntimeShipments(serverShipments);
+    } else if (!state.shipments.length) {
+      hydrateRuntimeShipments();
+    }
+
+    if (document.querySelector('#dashboard-table')) {
+      renderDashboard();
+    }
+    if (document.querySelector('#timeline-list')) {
+      initDetailsSearch();
+    }
+    if (document.querySelector('#live-map')) {
+      initMapSearch();
+    }
+    if (document.querySelector('#control-select')) {
+      initControlPage();
+    }
+    if (window.feather) {
+      window.feather.replace();
+    }
+  } catch (error) {
+    console.error('Page initialization failed:', error);
+  } finally {
+    hidePreloader();
   }
 }
 
-window.addEventListener('DOMContentLoaded', initializePage);
+if (document.readyState === 'loading') {
+  window.addEventListener('DOMContentLoaded', initializePage);
+} else {
+  initializePage();
+}

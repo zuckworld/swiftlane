@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>About Swiftlane</title>
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+      :root {
+        --bg-dark-primary: #111827;
+        --bg-dark-secondary: #1f2937;
+        --accent-primary: #4f46e5;
+        --accent-secondary: #6366f1;
+        --text-primary: #f3f4f6;
+        --text-secondary: #9ca3af;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-dark-primary);
+        color: var(--text-primary);
+      }
+      .card {
+        background-color: var(--bg-dark-secondary);
+        border: 1px solid #374151;
+      }
+      .desktop-nav { transition: width 0.3s ease; }
+      .desktop-nav .nav-text { opacity: 0; transition: opacity 0.2s ease; }
+      .desktop-nav:hover .nav-text { opacity: 1; }
+      .page-header-bg {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+      }
+      .page-header-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(17, 24, 39, 1), rgba(17, 24, 39, 0.6));
+        z-index: 1;
+      }
+      .page-header-content {
+        position: relative;
+        z-index: 2;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="preloader" class="fixed inset-0 bg-gray-900 z-50 flex justify-center items-center transition-opacity duration-500">
+      <div class="flex flex-col items-center">
+        <svg class="h-16 w-16 text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+        <p class="mt-4 text-lg font-semibold text-gray-300">Swiftlane</p>
+      </div>
+    </div>
+
+    <div class="flex">
+      <nav class="desktop-nav hidden md:block fixed left-0 top-0 h-full bg-gray-800 shadow-lg w-20 hover:w-56 z-30 group">
+        <ul class="flex flex-col h-full py-4 space-y-2">
+          <li class="px-5 py-3 mb-4">
+            <a href="index.html" class="flex items-center space-x-2">
+              <svg class="h-10 w-10 text-indigo-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+              <span class="nav-text text-xl font-extrabold text-white whitespace-nowrap">Swiftlane</span>
+            </a>
+          </li>
+          <li><a href="index.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="home" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Home</span></a></li>
+          <li><a href="services.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="grid" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Services</span></a></li>
+          <li><a href="about.html" class="flex items-center py-3 px-6 text-indigo-400 bg-gray-900"><i data-feather="info" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">About</span></a></li>
+          <li><a href="contact.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="phone" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Contact</span></a></li>
+          <li><a href="details.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="compass" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Track</span></a></li>
+          <li><a href="map.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="map" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Live</span></a></li>
+        </ul>
+      </nav>
+
+      <div id="app-content" class="opacity-0 transition-opacity duration-500 w-full md:pl-20">
+        <header class="md:hidden bg-gray-800/80 backdrop-blur-sm sticky top-0 z-10">
+          <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+              <div class="flex items-center space-x-2">
+                <svg class="h-8 w-8 text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+                <span class="text-xl font-extrabold text-white">Swiftlane</span>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        <main>
+          <section class="page-header-bg min-h-[40vh] flex items-end py-16" style="background-image: url('https://placehold.co/1920x800/111827/374151?text=About+Us');">
+            <div class="page-header-content container mx-auto px-4 sm:px-6 lg:px-8">
+              <h1 class="text-4xl md:text-5xl font-extrabold text-white">About Swiftlane</h1>
+              <p class="mt-2 text-lg text-text-secondary max-w-2xl">Reliable shipping and logistics support for global teams that need clear visibility and dependable delivery.</p>
+            </div>
+          </section>
+
+          <section class="py-16 md:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
+                <div class="pr-0 md:pr-12">
+                  <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Our Story</h2>
+                  <p class="text-text-secondary mb-4">Founded in 2010, Swiftlane began with a simple mission: make global logistics accessible and stress-free for businesses of every size. We’ve grown into a trusted international partner by combining technology, experience, and a people-first approach.</p>
+                  <p class="text-text-secondary">Our network spans continents and our team is built to support complex shipping routes with precision, transparency, and speed.</p>
+                </div>
+                <div class="h-80 md:h-96 rounded-2xl overflow-hidden shadow-lg">
+                  <img src="https://images.unsplash.com/photo-1494412651409-8963ce7935a7?auto=format&fit=crop&w=1200&q=80" alt="Logistics journey" class="w-full h-full object-cover" />
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-16 md:py-24 bg-gray-800">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="card p-8 rounded-2xl">
+                  <div class="flex items-center mb-4">
+                    <i data-feather="crosshair" class="h-8 w-8 text-indigo-400 mr-4"></i>
+                    <h3 class="text-2xl font-bold text-white">Our Mission</h3>
+                  </div>
+                  <p class="text-text-secondary">To provide seamless, intelligent, and dependable logistics solutions that help businesses grow with confidence.</p>
+                </div>
+                <div class="card p-8 rounded-2xl">
+                  <div class="flex items-center mb-4">
+                    <i data-feather="eye" class="h-8 w-8 text-indigo-400 mr-4"></i>
+                    <h3 class="text-2xl font-bold text-white">Our Vision</h3>
+                  </div>
+                  <p class="text-text-secondary">To be the most transparent and client-centric logistics company in the world, raising the standard for service and visibility.</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-16 md:py-24">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div class="text-center max-w-3xl mx-auto mb-12">
+                <h2 class="text-3xl md:text-4xl font-bold text-white">Meet Our Leadership</h2>
+                <p class="mt-4 text-text-secondary">The people behind Swiftlane are experienced operators, technologists, and problem solvers committed to your success.</p>
+              </div>
+              <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+                <div class="text-center">
+                  <img src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=400&q=80" alt="CEO" class="w-40 h-40 rounded-full mx-auto mb-4 shadow-lg object-cover" />
+                  <h4 class="text-lg font-bold text-white">Patrick David</h4>
+                  <p class="text-sm text-indigo-400">Founder & CEO</p>
+                </div>
+                <div class="text-center">
+                  <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=400&q=80" alt="COO" class="w-40 h-40 rounded-full mx-auto mb-4 shadow-lg object-cover" />
+                  <h4 class="text-lg font-bold text-white">Jane Smith</h4>
+                  <p class="text-sm text-indigo-400">Chief Operations Officer</p>
+                </div>
+                <div class="text-center">
+                  <img src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=400&q=80" alt="CFO" class="w-40 h-40 rounded-full mx-auto mb-4 shadow-lg object-cover" />
+                  <h4 class="text-lg font-bold text-white">Samuel Chen</h4>
+                  <p class="text-sm text-indigo-400">Chief Financial Officer</p>
+                </div>
+                <div class="text-center">
+                  <img src="https://images.unsplash.com/photo-1491349174775-aaafddd81942?auto=format&fit=crop&w=400&q=80" alt="CTO" class="w-40 h-40 rounded-full mx-auto mb-4 shadow-lg object-cover" />
+                  <h4 class="text-lg font-bold text-white">Wendy Lucas</h4>
+                  <p class="text-sm text-indigo-400">Chief Technology Officer</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section class="py-20">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+              <div class="bg-indigo-600 rounded-2xl p-10 text-center shadow-2xl shadow-indigo-500/30">
+                <h2 class="text-3xl font-bold text-white mb-4">Join Our Growing List of Partners</h2>
+                <p class="text-indigo-200 max-w-2xl mx-auto mb-8">Experience the Swiftlane difference and build a stronger, more resilient supply chain with us.</p>
+                <a href="contact.html" class="bg-white text-indigo-600 font-semibold px-8 py-4 rounded-xl hover:bg-gray-200 transition-colors duration-300">Become a Partner</a>
+              </div>
+            </div>
+          </section>
+
+          <footer class="bg-gray-800 border-t border-gray-700">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+              <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                <div>
+                  <h4 class="font-bold text-white mb-4">Swiftlane</h4>
+                  <p class="text-sm text-text-secondary">Your trusted partner in global logistics and dependable delivery.</p>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-4">Quick Links</h4>
+                  <ul class="space-y-2 text-sm">
+                    <li><a href="about.html" class="text-text-secondary hover:text-white">About Us</a></li>
+                    <li><a href="services.html" class="text-text-secondary hover:text-white">Services</a></li>
+                    <li><a href="details.html" class="text-text-secondary hover:text-white">Track Shipment</a></li>
+                    <li><a href="contact.html" class="text-text-secondary hover:text-white">Contact Us</a></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-4">Contact Info</h4>
+                  <ul class="space-y-2 text-sm text-text-secondary">
+                    <li class="flex items-start"><i data-feather="map-pin" class="h-4 w-4 mr-2 mt-1"></i><span>512 Logic Drive, Suite 400, Sydney NSW 2000</span></li>
+                    <li class="flex items-center"><i data-feather="phone" class="h-4 w-4 mr-2"></i><span>+1 (814) 417-4576</span></li>
+                    <li class="flex items-center"><i data-feather="mail" class="h-4 w-4 mr-2"></i><span>support@swiftlane.online</span></li>
+                  </ul>
+                </div>
+                <div>
+                  <h4 class="font-bold text-white mb-4">Follow Us</h4>
+                  <div class="flex space-x-4">
+                    <a href="#" class="text-text-secondary hover:text-white"><i data-feather="twitter"></i></a>
+                    <a href="#" class="text-text-secondary hover:text-white"><i data-feather="facebook"></i></a>
+                    <a href="#" class="text-text-secondary hover:text-white"><i data-feather="linkedin"></i></a>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </footer>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      feather.replace();
+      window.addEventListener('load', () => {
+        const preloader = document.getElementById('preloader');
+        const content = document.getElementById('app-content');
+        setTimeout(() => {
+          preloader.style.opacity = '0';
+          content.style.opacity = '1';
+          setTimeout(() => preloader.style.display = 'none', 500);
+        }, 400);
+      });
+    </script>
+  </body>
+</html>

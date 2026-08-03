@@ -1,22 +1,22 @@
 :root {
   font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color-scheme: light;
-  --bg: #f7f8fb;
-  --surface: #ffffff;
-  --surface-soft: #f8fafc;
-  --text: #111827;
-  --muted: #6b7280;
-  --accent: #ff8b44;
-  --accent-2: #ff4f82;
-  --accent-soft: rgba(255, 139, 68, 0.14);
-  --border: rgba(15, 23, 42, 0.08);
-  --shadow: 0 24px 60px rgba(15, 23, 42, 0.08);
+  color-scheme: dark;
+  --bg: #111827;
+  --surface: #1f2937;
+  --surface-soft: #111827;
+  --text: #f3f4f6;
+  --muted: #9ca3af;
+  --accent: #4f46e5;
+  --accent-2: #6366f1;
+  --accent-soft: rgba(79, 70, 229, 0.16);
+  --border: rgba(255, 255, 255, 0.08);
+  --shadow: 0 24px 60px rgba(2, 6, 23, 0.35);
   --success: #22c55e;
   --warning: #f59e0b;
   --danger: #ef4444;
   --info: #38bdf8;
-  --btn-accent1: #6d5cff;
-  --btn-accent2: #2fd6ff;
+  --btn-accent1: #4f46e5;
+  --btn-accent2: #6366f1;
 }
 
 * {
@@ -32,7 +32,6 @@ body {
 body {
   background: var(--bg);
   color: var(--text);
-  padding-bottom: 120px;
 }
 
 body::before {

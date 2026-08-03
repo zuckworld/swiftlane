@@ -4,77 +4,194 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swiftlane - Live map</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+      :root {
+        --bg-dark-primary: #111827;
+        --bg-dark-secondary: #1f2937;
+        --accent-primary: #4f46e5;
+        --accent-secondary: #6366f1;
+        --text-primary: #f3f4f6;
+        --text-secondary: #9ca3af;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-dark-primary);
+        color: var(--text-primary);
+      }
+      .card {
+        background-color: var(--bg-dark-secondary);
+        border: 1px solid #374151;
+      }
+      .primary-btn {
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .secondary-btn {
+        background: transparent;
+        color: #d1d5db;
+        border: 1px solid rgba(148,163,184,0.5);
+        cursor: pointer;
+      }
+      .primary-btn:hover { background: #4338ca; }
+      .secondary-btn:hover { border-color: #4f46e5; color: white; }
+      .desktop-nav { transition: width 0.3s ease; }
+      .desktop-nav .nav-text { opacity: 0; transition: opacity 0.2s ease; }
+      .desktop-nav:hover .nav-text { opacity: 1; }
+      .page-header-bg {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+      }
+      .page-header-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(17, 24, 39, 1), rgba(17, 24, 39, 0.6));
+        z-index: 1;
+      }
+      .page-header-content {
+        position: relative;
+        z-index: 2;
+      }
+      .form-input {
+        background-color: #374151;
+        border: 1px solid #4b5563;
+        color: var(--text-primary);
+      }
+      .form-input:focus {
+        background-color: var(--bg-dark-secondary);
+        border-color: var(--accent-secondary);
+        outline: none;
+      }
+    </style>
   </head>
   <body>
-    <main class="app-shell">
-      <header class="page-header map-header">
-        <div>
-          <span class="eyebrow">Live map</span>
-          <h1>All active riders</h1>
-          <p>Track multiple deliveries at once with a full-screen route overview.</p>
-        </div>
-      </header>
+    <div id="preloader" class="fixed inset-0 bg-gray-900 z-50 flex justify-center items-center transition-opacity duration-500">
+      <div class="flex flex-col items-center">
+        <svg class="h-16 w-16 text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+        <p class="mt-4 text-lg font-semibold text-gray-300">Swiftlane</p>
+      </div>
+    </div>
 
-      <section id="search-screen" class="panel search-screen">
-        <div class="search-inner">
-          <div>
-            <span class="eyebrow">Swiftlane</span>
-            <h2>Track a package</h2>
-            <p class="page-title-note">Enter a tracking number to view its live route and timeline.</p>
-          </div>
-          <div class="search-controls">
-            <input id="search-input" type="text" placeholder="Enter tracking number (e.g. SL-2026-0043891)" aria-label="Tracking number" />
-            <button id="search-btn" class="primary-btn">Track</button>
-          </div>
-          <div id="search-error" class="control-note" aria-live="polite"></div>
-        </div>
-      </section>
+    <div class="flex">
+      <nav class="desktop-nav hidden md:block fixed left-0 top-0 h-full bg-gray-800 shadow-lg w-20 hover:w-56 z-30 group">
+        <ul class="flex flex-col h-full py-4 space-y-2">
+          <li class="px-5 py-3 mb-4">
+            <a href="index.html" class="flex items-center space-x-2">
+              <svg class="h-10 w-10 text-indigo-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+              <span class="nav-text text-xl font-extrabold text-white whitespace-nowrap">Swiftlane</span>
+            </a>
+          </li>
+          <li><a href="index.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="home" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Home</span></a></li>
+          <li><a href="services.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="grid" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Services</span></a></li>
+          <li><a href="about.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="info" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">About</span></a></li>
+          <li><a href="contact.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="phone" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Contact</span></a></li>
+          <li><a href="details.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="compass" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Track</span></a></li>
+          <li><a href="map.html" class="flex items-center py-3 px-6 text-indigo-400 bg-gray-900"><i data-feather="map" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Live</span></a></li>
+        </ul>
+      </nav>
 
-      <section class="map-shell hidden">
-        <aside class="map-sidebar">
-          <div class="route-panel-header">
-            <div>
-              <span class="eyebrow">Active riders</span>
-              <h2>Rider dispatch</h2>
+      <div id="app-content" class="opacity-0 transition-opacity duration-500 w-full md:pl-20">
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+          <div class="card rounded-2xl shadow-lg p-6 md:p-8 mb-8">
+            <header class="page-header map-header">
+              <div>
+                <span class="eyebrow">Live map</span>
+                <h1>All active riders</h1>
+                <p>Track multiple deliveries at once with a full-screen route overview.</p>
+              </div>
+            </header>
+          </div>
+
+          <section id="live-summary" class="card rounded-2xl shadow-lg p-6 md:p-8 mb-6">
+            <div class="grid gap-4 sm:grid-cols-3">
+              <div class="rounded-2xl bg-gray-900 border border-gray-700 p-5">
+                <span class="eyebrow">Active riders</span>
+                <h3 id="active-riders-count" class="mt-3 text-3xl font-semibold">0</h3>
+                <p class="page-title-note mt-2">Deliveries currently in progress.</p>
+              </div>
+              <div class="rounded-2xl bg-gray-900 border border-gray-700 p-5">
+                <span class="eyebrow">On route</span>
+                <h3 id="onroute-count" class="mt-3 text-3xl font-semibold">0</h3>
+                <p class="page-title-note mt-2">Riders moving toward delivery.</p>
+              </div>
+              <div class="rounded-2xl bg-gray-900 border border-gray-700 p-5">
+                <span class="eyebrow">Delayed</span>
+                <h3 id="delayed-count" class="mt-3 text-3xl font-semibold">0</h3>
+                <p class="page-title-note mt-2">Shipments currently marked delayed.</p>
+              </div>
             </div>
-          </div>
-          <div id="rider-list"></div>
-          <div class="legend-grid">
-            <div class="legend-item"><div class="legend-swatch" style="background:#38bdf8"></div><span>In transit</span></div>
-            <div class="legend-item"><div class="legend-swatch" style="background:#10b981"></div><span>Out for delivery</span></div>
-            <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div><span>Delayed</span></div>
-          </div>
-        </aside>
-        <div>
-          <a id="track-another" href="#" class="track-another hidden">Track another package</a>
-          <div id="live-map"></div>
-          <div id="map-fallback" class="map-fallback hidden">
-            <h2>Map loading unavailable</h2>
-            <p>Leaflet failed to load. Please check your network or try again later.</p>
-          </div>
-        </div>
-      </section>
-    </main>
+          </section>
 
-    <footer class="footer-bar" aria-label="Primary navigation">
-      <a class="nav-link" href="index.html">
-        <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
-        <span>Dashboard</span>
-      </a>
-      <a class="nav-link" href="details.html">
-        <span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span>
-        <span>Track</span>
-      </a>
-      <a class="nav-link active" href="map.html">
-        <span class="nav-icon"><i class="fa-solid fa-map"></i></span>
-        <span>Live</span>
-      </a>
-    </footer>
+          <section id="search-screen" class="card rounded-2xl shadow-lg p-6 md:p-8">
+            <div class="search-inner space-y-5">
+              <div>
+                <span class="eyebrow">Swiftlane</span>
+                <h2>Track a package</h2>
+                <p class="page-title-note">Enter a tracking number to view its live route and timeline.</p>
+              </div>
+              <div class="search-controls flex flex-col sm:flex-row gap-4 items-center">
+                <input id="search-input" class="form-input rounded-xl w-full px-4 py-3 min-w-0" type="text" placeholder="Enter tracking number (e.g. SL-2026-0043891)" aria-label="Tracking number" />
+                <button id="search-btn" class="primary-btn rounded-xl px-6 py-3 font-semibold shadow-lg transition duration-200">Track</button>
+              </div>
+              <div id="search-error" class="control-note" aria-live="polite"></div>
+            </div>
+          </section>
+
+          <section class="map-shell hidden grid gap-6 xl:grid-cols-[360px_1fr] mt-6">
+            <aside class="card rounded-2xl shadow-lg p-6 md:p-8 map-sidebar space-y-5">
+              <div class="route-panel-header">
+                <div>
+                  <span class="eyebrow">Active riders</span>
+                  <h2>Rider dispatch</h2>
+                </div>
+              </div>
+              <div id="rider-list"></div>
+              <div class="legend-grid mt-6">
+                <div class="legend-item"><div class="legend-swatch" style="background:#38bdf8"></div><span>In transit</span></div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#10b981"></div><span>Out for delivery</span></div>
+                <div class="legend-item"><div class="legend-swatch" style="background:#ef4444"></div><span>Delayed</span></div>
+              </div>
+            </aside>
+            <div class="card rounded-2xl shadow-lg p-6 md:p-8 space-y-5">
+              <a id="track-another" href="#" class="track-another hidden">Track another package</a>
+              <div id="live-map" class="h-[520px] rounded-3xl overflow-hidden bg-gray-900"></div>
+              <div id="map-fallback" class="map-fallback hidden mt-6 rounded-2xl bg-gray-900 p-6">
+                <h2>Map loading unavailable</h2>
+                <p>Leaflet failed to load. Please check your network or try again later.</p>
+              </div>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <script>
+      function fallbackShowApp() {
+        const preloader = document.getElementById('preloader');
+        const appContent = document.getElementById('app-content');
+        if (preloader) {
+          preloader.style.opacity = '0';
+          setTimeout(() => { preloader.style.display = 'none'; }, 500);
+        }
+        if (appContent) {
+          appContent.style.opacity = '1';
+        }
+        if (window.feather) {
+          window.feather.replace();
+        }
+      }
+      document.addEventListener('DOMContentLoaded', fallbackShowApp);
+      window.addEventListener('load', fallbackShowApp);
+    </script>
+    <script src="api-config.js"></script>
     <script type="module" src="script.js"></script>
   </body>
 </html>

@@ -3,107 +3,337 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Swiftlane - Tracking</title>
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <title>Track Shipment - Swiftlane</title>
+
+    <script src="https://cdn.tailwindcss.com/"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+    <script src="https://unpkg.com/feather-icons"></script>
+    <style>
+      :root {
+        --bg-dark-primary: #111827;
+        --bg-dark-secondary: #1f2937;
+        --accent-primary: #4f46e5;
+        --accent-secondary: #6366f1;
+        --text-primary: #f3f4f6;
+        --text-secondary: #9ca3af;
+      }
+      body {
+        font-family: 'Inter', sans-serif;
+        background-color: var(--bg-dark-primary);
+        color: var(--text-primary);
+      }
+      .card {
+        background-color: var(--bg-dark-secondary);
+        border: 1px solid #374151;
+      }
+      .primary-btn {
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      .secondary-btn {
+        background: transparent;
+        color: #d1d5db;
+        border: 1px solid rgba(148,163,184,0.5);
+        cursor: pointer;
+      }
+      .primary-btn:hover { background: #4338ca; }
+      .secondary-btn:hover { border-color: #4f46e5; color: white; }
+      .desktop-nav { transition: width 0.3s ease; }
+      .desktop-nav .nav-text { opacity: 0; transition: opacity 0.2s ease; }
+      .desktop-nav:hover .nav-text { opacity: 1; }
+      .page-header-bg {
+        position: relative;
+        background-size: cover;
+        background-position: center;
+      }
+      .page-header-bg::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(to top, rgba(17, 24, 39, 1), rgba(17, 24, 39, 0.6));
+        z-index: 1;
+      }
+      .page-header-content {
+        position: relative;
+        z-index: 2;
+      }
+      .card {
+        background-color: rgba(17, 24, 39, 0.95);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        box-shadow: 0 24px 80px rgba(15, 23, 42, 0.22);
+      }
+      .form-input {
+        background-color: #1f2937;
+        border: 1px solid #374151;
+        color: var(--text-primary);
+      }
+      .form-input:focus {
+        background-color: var(--bg-dark-secondary);
+        border-color: var(--accent-secondary);
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.18);
+      }
+      .search-inner {
+        display: grid;
+        gap: 1.25rem;
+      }
+      .summary-head {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .summary-head strong {
+        font-size: 2rem;
+        letter-spacing: -0.03em;
+      }
+      .summary-meta {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+        gap: 1rem;
+      }
+      .summary-meta span {
+        display: block;
+        color: #9ca3af;
+        font-size: 0.82rem;
+      }
+      .summary-meta strong {
+        display: block;
+        margin-top: 0.35rem;
+        font-size: 0.98rem;
+      }
+      .route-panel-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 1rem;
+        flex-wrap: wrap;
+      }
+      .route-panel-header h2 {
+        margin: 0;
+        font-size: 1.25rem;
+      }
+      .route-list,
+      .timeline-list {
+        margin: 0;
+        padding: 0;
+        list-style: none;
+        display: grid;
+        gap: 0.85rem;
+      }
+      .route-list li,
+      .timeline-list li {
+        padding: 1rem 1.15rem;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(148, 163, 184, 0.18);
+        border-radius: 1.25rem;
+      }
+      .timeline-event {
+        display: grid;
+        gap: 0.35rem;
+      }
+      .timeline-event.active {
+        border-left: 3px solid #4f46e5;
+        padding-left: 0.85rem;
+      }
+      .timeline-event strong {
+        display: block;
+        font-size: 1rem;
+      }
+      .progress-track {
+        background: rgba(148, 163, 184, 0.14);
+        border-radius: 999px;
+        height: 0.75rem;
+        overflow: hidden;
+      }
+      .progress-fill {
+        background: linear-gradient(135deg, #4f46e5, #6366f1);
+        height: 100%;
+        width: 0%;
+        transition: width 0.35s ease;
+      }
+      .track-another {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        color: #a5b4fc;
+        font-weight: 600;
+        text-decoration: none;
+      }
+      .track-another:hover {
+        color: #e0e7ff;
+      }
+      .map-shell {
+        display: grid;
+        gap: 1.5rem;
+      }
+      .control-note,
+      .page-title-note {
+        color: #c7d2fe;
+      }
+      .status-pill {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.4rem 0.85rem;
+        border-radius: 999px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .status-pill.pending { background: #fed7aa; color: #92400e; }
+      .status-pill.in-transit { background: #bfdbfe; color: #1d4ed8; }
+      .status-pill.out-for-delivery { background: #bbf7d0; color: #166534; }
+      .status-pill.delivered { background: #a7f3d0; color: #0f766e; }
+      .status-pill.delayed { background: #fecaca; color: #991b1b; }
+      @media (min-width: 1024px) {
+        .map-shell {
+          grid-template-columns: 1fr 0.95fr;
+        }
+      }
+    </style>
   </head>
   <body>
-    <main class="app-shell">
-      <header class="page-header detail-header">
-        <div>
-          <span class="eyebrow">Tracking</span>
-          <h1>Shipment timeline</h1>
-          <p>Watch event updates appear as the delivery moves through the route.</p>
-        </div>
-      </header>
+    <div id="preloader" class="fixed inset-0 bg-gray-900 z-50 flex justify-center items-center transition-opacity duration-500">
+      <div class="flex flex-col items-center">
+        <svg class="h-16 w-16 text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+        <p class="mt-4 text-lg font-semibold text-gray-300">Swiftlane</p>
+      </div>
+    </div>
 
-      <section id="search-screen" class="panel search-screen">
-        <div class="search-inner">
-          <div>
-            <span class="eyebrow">Swiftlane</span>
-            <h2>Track a package</h2>
-            <p class="page-title-note">Enter a tracking number to view its timeline and route.</p>
-          </div>
-          <div class="search-controls">
-            <input id="details-search-input" type="text" placeholder="Enter tracking number (e.g. SL-2026-0043891)" aria-label="Tracking number" />
-            <button id="details-search-btn" class="primary-btn">Track</button>
-          </div>
-          <div id="details-search-error" class="control-note" aria-live="polite"></div>
-        </div>
-      </section>
+    <div class="flex">
+      <nav class="desktop-nav hidden md:block fixed left-0 top-0 h-full bg-gray-800 shadow-lg w-20 hover:w-56 z-30 group">
+        <ul class="flex flex-col h-full py-4 space-y-2">
+          <li class="px-5 py-3 mb-4">
+            <a href="index.html" class="flex items-center space-x-2">
+              <svg class="h-10 w-10 text-indigo-400 flex-shrink-0" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+              <span class="nav-text text-xl font-extrabold text-white whitespace-nowrap">Swiftlane</span>
+            </a>
+          </li>
+          <li><a href="index.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="home" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Home</span></a></li>
+          <li><a href="services.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="grid" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Services</span></a></li>
+          <li><a href="about.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="info" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">About</span></a></li>
+          <li><a href="contact.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="phone" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Contact</span></a></li>
+          <li><a href="details.html" class="flex items-center py-3 px-6 text-indigo-400 bg-gray-900"><i data-feather="compass" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Track</span></a></li>
+          <li><a href="map.html" class="flex items-center py-3 px-6 text-gray-300 hover:bg-indigo-600 hover:text-white rounded-r-full transition-colors duration-200"><i data-feather="map" class="h-6 w-6 flex-shrink-0"></i><span class="nav-text ml-4 font-semibold whitespace-nowrap">Live</span></a></li>
+        </ul>
+      </nav>
 
-      <section class="panel details-summary-card">
-      
-        <div class="summary-head">
-          <div>
-            <span class="eyebrow">Order</span>
-            <strong id="details-order">SWL-0000</strong>
-          </div>
-          <div id="details-status"></div>
-        </div>
-
-        <div class="summary-meta">
-          <div>
-            <span>From</span>
-            <strong id="details-from"></strong>
-          </div>
-          <div>
-            <span>To</span>
-            <strong id="details-to"></strong>
-          </div>
-          <div>
-            <span>Rider</span>
-            <strong id="details-rider"></strong>
-          </div>
-          <div>
-            <span>Last update</span>
-            <strong id="details-updated"></strong>
-          </div>
-        </div>
-      </section>
-
-      <section class="map-shell">
-        <article class="route-panel">
-          <div class="route-panel-header">
-            <div>
-              <span class="eyebrow">Route</span>
-              <h2>Planned stops</h2>
+      <div id="app-content" class="opacity-0 transition-opacity duration-500 w-full md:pl-20">
+        <header class="md:hidden bg-gray-800/80 backdrop-blur-sm sticky top-0 z-10">
+          <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+              <div class="flex items-center space-x-2">
+                <svg class="h-8 w-8 text-indigo-400" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5-10-5-10 5z"/></svg>
+                <span class="text-xl font-extrabold text-white">Swiftlane</span>
+              </div>
             </div>
           </div>
-          <ol id="routes-list"></ol>
-        </article>
+        </header>
 
-        <article class="timeline-panel">
-          <div class="route-panel-header">
-            <div>
-              <span class="eyebrow">Timeline</span>
-              <h2>Live event updates</h2>
+        <main class="container mx-auto p-4 sm:p-6 lg:p-8">
+          <section class="page-header-bg min-h-[40vh] flex items-end py-16 rounded-3xl overflow-hidden" style="background-image: url('https://placehold.co/1920x800/111827/374151?text=Track+Your+Shipment');">
+            <div class="page-header-content container mx-auto px-4 sm:px-6 lg:px-8">
+              <h1 class="text-4xl md:text-5xl font-extrabold text-white">Track Your Shipment</h1>
+              <p class="mt-2 text-lg text-text-secondary max-w-2xl">Enter a tracking number to view the route, timeline, and live progress for the shipment.</p>
             </div>
-          </div>
-            <a id="details-track-another" href="#" class="track-another hidden">Track another package</a>
-            <div class="progress-track">
-            <div id="timeline-progress" class="progress-fill"></div>
-          </div>
-          <ul id="timeline-list" class="timeline-list"></ul>
-        </article>
-      </section>
-    </main>
+          </section>
 
-    <footer class="footer-bar" aria-label="Primary navigation">
-      <a class="nav-link" href="index.html">
-        <span class="nav-icon"><i class="fa-solid fa-house"></i></span>
-        <span>Dashboard</span>
-      </a>
-      <a class="nav-link active" href="details.html">
-        <span class="nav-icon"><i class="fa-solid fa-clipboard-list"></i></span>
-        <span>Track</span>
-      </a>
-      <a class="nav-link" href="map.html">
-        <span class="nav-icon"><i class="fa-solid fa-map"></i></span>
-        <span>Live</span>
-      </a>
-    </footer>
+          <section id="search-screen" class="card rounded-2xl shadow-lg p-6 md:p-8 mt-6">
+            <div class="search-inner">
+              <div>
+                <span class="eyebrow">Swiftlane</span>
+                <h2>Track a package</h2>
+                <p class="page-title-note">Enter a tracking number to view its timeline and route.</p>
+              </div>
+              <div class="search-controls flex flex-col sm:flex-row gap-4 items-center">
+                <input id="details-search-input" class="form-input rounded-xl w-full px-4 py-3 min-w-0" type="text" placeholder="Enter tracking number (e.g. SL-2026-0043891)" aria-label="Tracking number" />
+                <button id="details-search-btn" class="primary-btn rounded-xl px-6 py-3 font-semibold shadow-lg transition duration-200">Track</button>
+              </div>
+              <div id="details-search-error" class="control-note" aria-live="polite"></div>
+            </div>
+          </section>
 
+          <section class="card rounded-2xl shadow-lg p-6 md:p-8 mt-6 details-summary-card space-y-6 hidden">
+            <div class="summary-head">
+              <div>
+                <span class="eyebrow">Order</span>
+                <strong id="details-order">SWL-0000</strong>
+              </div>
+              <div id="details-status"></div>
+            </div>
+            <div class="summary-meta">
+              <div>
+                <span>From</span>
+                <strong id="details-from"></strong>
+              </div>
+              <div>
+                <span>To</span>
+                <strong id="details-to"></strong>
+              </div>
+              <div>
+                <span>Rider</span>
+                <strong id="details-rider"></strong>
+              </div>
+              <div>
+                <span>Last update</span>
+                <strong id="details-updated"></strong>
+              </div>
+            </div>
+          </section>
+
+          <section class="map-shell hidden mt-6 space-y-6">
+            <article class="card rounded-2xl shadow-lg p-6 md:p-8 mb-6 route-panel space-y-4">
+              <div class="route-panel-header">
+                <div>
+                  <span class="eyebrow">Route</span>
+                  <h2>Planned stops</h2>
+                </div>
+              </div>
+              <ol id="routes-list"></ol>
+            </article>
+
+            <article class="card rounded-2xl shadow-lg p-6 md:p-8 timeline-panel space-y-4">
+              <div class="route-panel-header">
+                <div>
+                  <span class="eyebrow">Timeline</span>
+                  <h2>Live event updates</h2>
+                </div>
+              </div>
+              <a id="details-track-another" href="#" class="track-another hidden">Track another package</a>
+              <div class="progress-track">
+                <div id="timeline-progress" class="progress-fill"></div>
+              </div>
+              <ul id="timeline-list" class="timeline-list"></ul>
+            </article>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script>
+      function fallbackShowApp() {
+        const preloader = document.getElementById('preloader');
+        const appContent = document.getElementById('app-content');
+        if (preloader) {
+          preloader.style.opacity = '0';
+          setTimeout(() => { preloader.style.display = 'none'; }, 500);
+        }
+        if (appContent) {
+          appContent.style.opacity = '1';
+        }
+        if (window.feather) {
+          window.feather.replace();
+        }
+      }
+      document.addEventListener('DOMContentLoaded', fallbackShowApp);
+      window.addEventListener('load', fallbackShowApp);
+    </script>
+    <script src="api-config.js"></script>
     <script type="module" src="script.js"></script>
   </body>
 </html>

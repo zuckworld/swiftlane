@@ -1,5 +1,5 @@
 /*
-  In a real Swiftlane application, these render helpers would be triggered by
+  In a real Swiftlane Logistics application, these render helpers would be triggered by
   websocket updates or a real-time push service instead of local timers.
   This demo keeps the same page structure while using shared utility logic
   across dashboard, tracking, and live map screens.

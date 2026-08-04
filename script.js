@@ -8,7 +8,7 @@ import {
 } from './simulation.js';
 import { formatNow, getQueryParam, statusLabel, statusClass, renderEventItem, sortShipments } from './app.js';
 
-const STORAGE_KEY = 'swiftlane-simulation-state-v1';
+const STORAGE_KEY = 'Swiftlane Logistics-simulation-state-v1';
 
 const state = {
   activeShipment: null,
@@ -69,6 +69,7 @@ function serializeShipmentForSave(shipment) {
     lastUpdate: shipment.lastUpdate,
     route: shipment.route,
     events: shipment.events,
+    simulation: shipment.simulation,
   };
 }
 
@@ -89,13 +90,15 @@ function buildRuntimeShipments(sourceShipments) {
   return sourceShipments.map((shipment) => {
     const route = shipment.route || [];
     const destination = shipment.destination || route[route.length - 1] || shipment.route[shipment.route.length - 1];
+    const progressFraction = shipment.simulation?.progressFraction ?? getInitialProgressForStatus(shipment.status);
+    const isDelayed = shipment.simulation?.isDelayed ?? shipment.status === 'delayed';
     const simulation = createSimulationState(shipment, {
       route,
       destination,
       etaHours: estimateEtaHours(route),
-      progressFraction: getInitialProgressForStatus(shipment.status),
+      progressFraction,
       mode: shipment.simulation?.mode ?? 'realtime',
-      isDelayed: Boolean(shipment.simulation?.isDelayed),
+      isDelayed,
       lastUpdatedAt: shipment.simulation?.lastUpdatedAt ?? Date.now(),
       startedAt: shipment.simulation?.startedAt ?? Date.now(),
     });
@@ -311,7 +314,7 @@ function initTrackingPage(matchedShipment = null) {
   if (!shipment) return renderMissingShipment();
 
   state.activeShipment = shipment;
-  document.title = `Swiftlane - ${shipment.trackingNumber}`;
+  document.title = `Swiftlane Logistics - ${shipment.trackingNumber}`;
   updateActiveShipmentView();
   startTimelinePlayback();
 }

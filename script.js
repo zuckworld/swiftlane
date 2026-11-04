@@ -38,6 +38,7 @@ const uaeDestinations = [
   { value: 'Sharjah Freight City', name: 'Sharjah Freight City', lat: 25.2736, lng: 55.3874 },
   { value: 'Al Ain Mall', name: 'Al Ain Mall', lat: 24.1302, lng: 55.8023 },
   { value: 'Jumeirah Beach Road', name: 'Jumeirah Beach Road', lat: 25.1849, lng: 55.2365 },
+  { value: 'Barangay Nagbalagan, Bangui, Ilocos Norte', name: 'Barangay Nagbalagan, Bangui, Ilocos Norte', lat: 18.5366878, lng: 120.7655254 },
 ];
 
 function formatUpdatedLabel(ship) {
@@ -538,7 +539,9 @@ function initControlPage() {
       shipment.simulation.isDelayed = statusSelect.value === 'delayed';
       shipment.simulation.destination = destinationOption;
       shipment.route = shipment.simulation.route;
-      shipment.receiver = `${destinationOption.name}, UAE`;
+      shipment.receiver = destinationOption.name.includes('Ilocos Norte')
+        ? destinationOption.name
+        : `${destinationOption.name}, UAE`;
       shipment.events = shipment.events.map((event) => {
         if (['out_for_delivery', 'delayed', 'delivered'].includes(event.key)) {
           return { ...event, meta: destinationOption.name };

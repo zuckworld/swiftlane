@@ -37,6 +37,23 @@ test('rerouting uses the live position and recomputes a shorter remaining ETA', 
   assert.deepEqual(rerouted.route[1], snapshot.position);
 });
 
+test('delayed route stays paused at Manila before continuing to Nagbalagan', () => {
+  const route = [
+    { name: 'Origin', lat: 40.8116, lng: -73.952 },
+    { name: 'Manila (capital)', lat: 14.5833, lng: 121.0 },
+    { name: 'Barangay Nagbalagan, Bangui, Ilocos Norte', lat: 18.5366878, lng: 120.7655254 },
+  ];
+  const shipment = { ...baseShipment, trackingNumber: 'SWL-1068', route };
+  const state = createSimulationState(shipment, { route, progressFraction: 0.5, isDelayed: true });
+  const before = getSimulationSnapshot(shipment, state, 1000).position;
+  const afterState = tickSimulation(state, 60_000);
+  const after = getSimulationSnapshot(shipment, afterState, 60_000).position;
+  assert.deepEqual(before, { lat: 14.5833, lng: 121.0 });
+  assert.deepEqual(after, before);
+  assert.equal(afterState.progressFraction, 0.5);
+  assert.equal(afterState.isDelayed, true);
+});
+
 test('status becomes derived from progress and delayed overrides', () => {
   const state = createSimulationState(baseShipment, { progressFraction: 0.9, isDelayed: false });
   const snapshot = getSimulationSnapshot(baseShipment, state, Date.now());

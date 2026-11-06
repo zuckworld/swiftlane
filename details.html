@@ -193,8 +193,127 @@
       .status-pill.delayed { background: #fecaca; color: #991b1b; }
       @media (min-width: 1024px) {
         .map-shell {
-          grid-template-columns: 1fr 0.95fr;
+          grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+          align-items: start;
         }
+      }
+      /* Tracking detail refinements */
+      .page-header-bg {
+        min-height: 30vh;
+        background-color: #182235;
+        background-image: radial-gradient(ellipse at 82% 20%, rgba(99, 102, 241, 0.32), transparent 42%), linear-gradient(135deg, #111827 10%, #1e293b 100%) !important;
+      }
+      .page-header-bg::before {
+        background: linear-gradient(90deg, rgba(17, 24, 39, 0.95), rgba(17, 24, 39, 0.42));
+      }
+      .page-header-content h1 {
+        max-width: 15ch;
+        line-height: 1.08;
+        letter-spacing: -0.045em;
+      }
+      .page-header-content p {
+        color: #cbd5e1;
+        line-height: 1.65;
+      }
+      .card {
+        border-color: rgba(148, 163, 184, 0.17);
+        background: linear-gradient(145deg, rgba(31, 41, 55, 0.96), rgba(17, 24, 39, 0.96));
+        box-shadow: 0 20px 54px rgba(2, 6, 23, 0.22);
+      }
+      .search-inner h2,
+      .route-panel-header h2 {
+        margin: 0.35rem 0 0;
+        font-size: clamp(1.35rem, 2vw, 1.7rem);
+        line-height: 1.25;
+        letter-spacing: -0.025em;
+      }
+      .search-inner .page-title-note {
+        margin-top: 0.45rem;
+        color: #aebbd0;
+        line-height: 1.6;
+      }
+      .search-controls { align-items: stretch; }
+      .search-controls .primary-btn { min-height: 48px; }
+      .form-input { min-height: 48px; }
+      .primary-btn:focus-visible,
+      .secondary-btn:focus-visible,
+      .track-another:focus-visible,
+      #fab-menu-button:focus-visible {
+        outline: 3px solid rgba(165, 180, 252, 0.8);
+        outline-offset: 3px;
+      }
+      .details-summary-card { overflow: hidden; }
+      .summary-head {
+        align-items: center;
+        padding-bottom: 1.15rem;
+        border-bottom: 1px solid rgba(148, 163, 184, 0.16);
+      }
+      .summary-head strong {
+        display: block;
+        margin-top: 0.4rem;
+        font-size: clamp(1.45rem, 3vw, 2rem);
+        line-height: 1.15;
+        overflow-wrap: anywhere;
+      }
+      #details-status { max-width: 100%; }
+      .status-pill {
+        max-width: 100%;
+        text-align: center;
+        line-height: 1.35;
+        text-transform: none;
+      }
+      .summary-meta div {
+        min-width: 0;
+        padding: 1rem;
+        border: 1px solid rgba(148, 163, 184, 0.12);
+        border-radius: 1rem;
+        background: rgba(15, 23, 42, 0.45);
+      }
+      .summary-meta span {
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+      .summary-meta strong {
+        overflow-wrap: anywhere;
+        line-height: 1.55;
+      }
+      .route-panel, .timeline-panel { min-width: 0; }
+      .route-list, .timeline-list { min-width: 0; }
+      .route-list li, .timeline-list li {
+        min-width: 0;
+        overflow-wrap: anywhere;
+        background: rgba(15, 23, 42, 0.5);
+        border-color: rgba(148, 163, 184, 0.13);
+        border-radius: 1rem;
+      }
+      .timeline-list li { position: relative; }
+      .timeline-event.active {
+        border-left-width: 3px;
+        border-left-color: #818cf8;
+        padding-left: 1rem;
+      }
+      .timeline-event p { margin: 0.2rem 0 0; line-height: 1.55; }
+      .progress-track { height: 0.65rem; }
+      .progress-fill { background: linear-gradient(90deg, #4f46e5, #818cf8); }
+      .track-another {
+        min-height: 40px;
+        border-radius: 0.75rem;
+      }
+      .control-note { min-height: 1.25rem; color: #fca5a5; }
+      .map-shell { min-width: 0; }
+      @media (max-width: 640px) {
+        .page-header-bg { min-height: 230px; padding-top: 3.5rem; padding-bottom: 2rem; }
+        .page-header-content h1 { font-size: clamp(2rem, 10vw, 2.7rem); }
+        .search-controls .primary-btn { width: 100%; }
+        .summary-head { align-items: flex-start; }
+        .summary-meta { grid-template-columns: minmax(0, 1fr); }
+        .card.rounded-2xl { padding: 1.15rem; }
+        .timeline-list, .route-list { gap: 0.65rem; }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        *, *::before, *::after { scroll-behavior: auto !important; transition-duration: 0.01ms !important; }
       }
     </style>
   </head>
@@ -239,7 +358,8 @@
         <main class="container mx-auto p-4 sm:p-6 lg:p-8">
           <section class="page-header-bg min-h-[40vh] flex items-end py-16 rounded-3xl overflow-hidden" style="background-image: url('https://placehold.co/1920x800/111827/374151?text=Track+Your+Shipment');">
             <div class="page-header-content container mx-auto px-4 sm:px-6 lg:px-8">
-              <h1 class="text-4xl md:text-5xl font-extrabold text-white">Track Your Shipment</h1>
+              <span class="eyebrow">Swiftlane tracking</span>
+              <h1 class="text-4xl md:text-5xl font-extrabold text-white">Track your shipment</h1>
               <p class="mt-2 text-lg text-text-secondary max-w-2xl">Enter a tracking number to view the route, timeline, and live progress for the shipment.</p>
             </div>
           </section>
@@ -295,7 +415,7 @@
                   <h2>Planned stops</h2>
                 </div>
               </div>
-              <ol id="routes-list"></ol>
+              <ol id="routes-list" class="route-list"></ol>
             </article>
 
             <article class="card rounded-2xl shadow-lg p-6 md:p-8 timeline-panel space-y-4">
@@ -306,7 +426,7 @@
                 </div>
               </div>
               <a id="details-track-another" href="#" class="track-another hidden">Track another package</a>
-              <div class="progress-track">
+              <div class="progress-track" role="progressbar" aria-label="Shipment journey progress" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
                 <div id="timeline-progress" class="progress-fill"></div>
               </div>
               <ul id="timeline-list" class="timeline-list"></ul>

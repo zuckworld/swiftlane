@@ -295,7 +295,12 @@ function updateActiveShipmentView() {
   renderRouteList();
   renderTimeline(Math.min(shipment.events.length - 1, Math.max(0, Math.floor(snapshot.progressFraction * shipment.events.length))));
   const bar = document.getElementById('timeline-progress');
-  if (bar) bar.style.width = `${Math.round(snapshot.progressFraction * 100)}%`;
+  const progress = Math.round(snapshot.progressFraction * 100);
+  if (bar) {
+    bar.style.width = `${progress}%`;
+    const progressTrack = bar.parentElement;
+    if (progressTrack) progressTrack.setAttribute('aria-valuenow', String(progress));
+  }
 }
 
 function initTrackingPage(matchedShipment = null) {

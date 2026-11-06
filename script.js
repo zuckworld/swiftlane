@@ -376,8 +376,9 @@ function initLiveMapPage(matchedShipment = null) {
 
   if (!state.map) {
     state.map = L.map('live-map', { zoomControl: false }).setView([25.0, 55.2], 5);
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
-      attribution: '© OpenStreetMap contributors • CARTO',
+    L.maplibreGL({
+      style: 'https://tiles.openfreemap.org/styles/liberty',
+      attribution: 'OpenFreeMap © OpenMapTiles Data from OpenStreetMap',
     }).addTo(state.map);
   } else {
     state.map.setView([25.0, 55.2], 5);
